@@ -1,0 +1,65 @@
+{
+  "name": "einkaufsliste",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/react-fontawesome": "^0.1.16",
+    "@testing-library/cypress": "^8.0.2",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "@wojtekmaj/enzyme-adapter-react-17": "^0.6.6",
+    "axios": "^0.21.1",
+    "bootstrap": "^5.1.3",
+    "dotenv": "^10.0.0",
+    "formik": "^2.2.9",
+    "jsdoc": "^3.6.7",
+    "node-sass": "^6.0.0",
+    "react": "^17.0.2",
+    "react-bootstrap": "^2.0.1",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "sass-loader": "^10.0.5",
+    "uuid": "^8.3.2",
+    "web-vitals": "^1.1.2",
+    "webpack": "4.44.2",
+    "yarn": "^1.22.17"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test ",
+    "eject": "node_modules/.bin/react-scripts eject",
+    "doc": "jsdoc -c jsdoc.json",
+    "cypress run": "$(npm bin)/cypress run",
+    "cypress open": "$(npm bin)/cypress open"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.16.4",
+    "@babel/preset-react": "^7.16.0",
+    "cypress": "^9.2.1",
+    "enzyme": "^3.11.0",
+    "jest": "26.6.0",
+    "react-test-renderer": "^17.0.2"
+  }
+}

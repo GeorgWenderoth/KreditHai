@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/liste/listItem/listElement.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/liste/listItem/listElement.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import axios from 'axios';
+import React, {useState} from "react";
+import {Col, Row, Card, Button, Modal} from "react-bootstrap";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faPen} from '@fortawesome/free-solid-svg-icons';
+import "../../../Styles.scss";
+import "../../App.scss";
+import {AxiosCalls} from "../../../utils/axiosCalls";
+
+/**
+ * Generiert ein Listen element / Item / einkaufspunkt mit den übergebenen werten
+ * @param props
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export function ListElement(props) {
+    const [amount, setAmount] = useState(props.item.amount);
+    const [showM, setShowM] = useState(false);
+    const [titel, setTitel] = useState(props.item.einkaufsPunkt)
+    const [notes, setNotes] = useState(props.item.notizen === undefined ? 'notizen' : props.item.notizen);
+    const [displayButton, setDisplayButton] = useState(props.item.strich ? "none" : "visible");
+    const [displayColour, setDisplayColour] = useState(props.item.strich);
+
+    /**
+     * Speichert die Anzahl onchange in den State
+     * @param e
+     */
+    const handleNumber = (e) => {
+        setAmount(e.target.value);
+        console.log("nummber: " + e + "id: " + props.item.itId);
+    }
+
+    /**
+     * Setzt im Backend durch AxiosCalls und im App state über props.updateDone ein Item auf erledigt
+     */
+    const einkaufErledigt = () => {
+        console.log("card or box klicked: " + props.item.itId);
+        const ob = {
+            "itId": props.id,
+            "einkaufsPunkt": "platzhalterdatenloeschen",
+            "strich": false,
+            "amount": 1
+        }
+        AxiosCalls('put','/einkaufsListeDurchgestrichen',ob);
+        props.updateDoneOrNot(props.id, props.item.strich);
+
+    }
+
+    /**
+     * Schließt Modal und speichert die änderungen im Backend (AxiosCalls) und im Frontend State (props.updatePunkt)
+     */
+    const handleClose = () => {
+        console.log("notizen: " + notes);
+       const ob = {
+           "itId": props.item.itId,
+           "einkaufsPunkt": titel,
+           "strich": false,
+           "amount": amount,
+           "notizen": notes
+       }
+       AxiosCalls('put','/einkaufsListeUpdateM', ob);
+
+        props.updatePunkt(props.item.itId, titel, false, amount, notes);
+        setShowM(false);
+    }
+
+    /**
+     * Schließt Modal nur, ohne zu speichernt, setzt Werte auf vorher zurück
+     */
+    const handleCloseWithoutSaving = () => {
+
+        setShowM(false);
+        setTitel(props.item.einkaufsPunkt);
+        setNotes(props.item.notizen);
+        setAmount(props.item.amount);
+    }
+
+
+    const handleShow = () => setShowM(true);
+    const handleText = (e) => setTitel(e.target.value);
+    const handleNotes = (e) => setNotes(e.target.value)
+
+    return (
+
+        &lt;Card className={"cardStyle " + (displayColour ? 'cardColourGreen' : 'cardColourRed')}
+              style={{border: '3px', cursor: "pointer"}}
+              key={props.item.itId.toString()}>
+            &lt;div className="buttonHull">
+                &lt;Button style={{display: displayButton}} onClick={handleShow}
+                        className="bearbeitungsButton">&lt;FontAwesomeIcon className="form-icon" icon={faPen}/>&lt;/Button>
+            &lt;/div>
+            &lt;Modal show={showM} onHide={handleCloseWithoutSaving}>
+                &lt;Modal.Header closeButton>
+                    &lt;Modal.Title>
+                        Bearbeite Einkaufspunkt
+                    &lt;/Modal.Title>
+                &lt;/Modal.Header>
+                &lt;Modal.Body>
+                    &lt;div className="container">
+                        &lt;div className="mb-3 row">
+                            &lt;label className="col-3 col-form-label">Einkauf: &lt;/label>
+                            &lt;div className="col-9">
+                                &lt;input className="form-control " type="text" onChange={handleText} value={titel}/>
+                            &lt;/div>
+                        &lt;/div>
+                        &lt;div className="mb-3 row">
+                            &lt;label className="col-3 col-form-label">Notizen: &lt;/label>
+                            &lt;div className="col-9">
+                                &lt;input className="form-control" type="text"
+                                       placeholder="Notizen"
+                                       onChange={handleNotes}
+                                       value={notes}/>
+                            &lt;/div>
+                        &lt;/div>
+                        &lt;div className="row">
+                            &lt;label className=" col-3 col-form-label">Anzahl: &lt;/label>
+                            &lt;div className="col-9">
+                                &lt;input className="form-control" type="number" value={amount}
+                                       onChange={(e) => handleNumber(e)}/>
+                            &lt;/div>
+                        &lt;/div>
+                    &lt;/div>
+                &lt;/Modal.Body>
+                &lt;Modal.Footer>&lt;Button variant="secondary" size="sm"
+                                      onClick={handleCloseWithoutSaving}>Abbrechen&lt;/Button>
+                    &lt;Button variant="primary" size="sm" onClick={handleClose}>Änderung Speichern&lt;/Button>
+                &lt;/Modal.Footer>
+            &lt;/Modal>
+            &lt;Card.Body onClick={(e) => einkaufErledigt()}>
+                &lt;div className="logoHull">
+                    &lt;p className="logo">{props.item.einkaufsPunkt[0]}&lt;/p>
+                &lt;/div>
+                &lt;div className="punktHull">
+                    &lt;p className="punkt">{props.item.einkaufsPunkt}&lt;/p> &lt;p className="punktAmount">{props.item.amount}&lt;/p>
+                &lt;/div>
+            &lt;/Card.Body>
+
+        &lt;/Card>
+
+    )
+}
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="AxiosCalls.html">AxiosCalls</a></li><li><a href="ContainerListe.html">ContainerListe</a></li><li><a href="ListElement.html">ListElement</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Feb 07 2022 15:36:36 GMT+0100 (Central European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

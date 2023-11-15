@@ -1,0 +1,19 @@
+// Submit, zahl, spaces / trim
+eingabe 2 space zahl
+
+Button desablen wenn eingabe nicht erlaubt
+im state button zustand speichern
+in submit button status überprüfen -> damit auch ob eingabe erlaubt oder nicht
+
+leer eingabe
+
+space eingabe //fehler über prüfen
+
+Verbotene Zeichen im fronten verhinder -> im backend idialer weise auch
+
+
+
+
+/// Code schnipes zwischenspeicher
+ <input className="form-control" type="text" id="inp" placeholder="Einkaufspunkt"
+                               value={value} onChange={handleChange} /* pattern="(?=.*[a-zA-Z])[a-zA-Z0-9- ]{1,100}" title="Must contain at least one letter, only letters diggits and spaces -"*/ />
