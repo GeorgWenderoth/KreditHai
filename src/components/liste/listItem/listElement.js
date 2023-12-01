@@ -13,8 +13,10 @@ import "../../App.scss";
  * @constructor
  */
 export function ListElement(props) {
-
-    const [date, setDate] = useState(props.item.date);
+    let newDate = new Date();
+     let datum =  newDate.toISOString().split('T')[0];
+    const [date, setDate] = useState(datum); //this is for transaction
+    const [transactionDate, setTransactionDate] = useState(datum);
     const [showM, setShowM] = useState(false);
     const [titel, setTitel] = useState(props.item.todoPunkt);
     const [betrag, setBetrag] = useState(0);
@@ -22,6 +24,8 @@ export function ListElement(props) {
     const [displayButton, setDisplayButton] = useState(props.item.strich ? "none" : "visible");
    // const [displayColour, setDisplayColour] = useState(props.item.strich);
     const [displayColour, setDisplayColour] = useState(props.item.betrag >= 0 ? true : false );
+    const [interestRate, setInterestRate] = useState(0);
+    const [interestPer, setInterestPer] = useState(0);
     /**
      * Speichert die Anzahl onchange in den State
      * @param e
@@ -59,7 +63,7 @@ export function ListElement(props) {
            "datum": date,
            "notizen": notes
        }
-        props.updatePunkt(props.item.itId, titel, betrag, false, date, notes);
+        props.updatePunkt(props.item.itId, titel, betrag, false, date, notes, interestRate, interestPer);
 
         setDisplayColour(betrag >= 0 ? true : false);
         setShowM(false);
@@ -84,7 +88,9 @@ export function ListElement(props) {
     const handleShow = () => setShowM(true);
     const handleText = (e) => setTitel(e.target.value);
     const handleBetrag = (e) => setBetrag(e.target.value);
-    const handleNotes = (e) => setNotes(e.target.value)
+    const handleNotes = (e) => setNotes(e.target.value);
+    const handleInterestRate = (e) => setInterestRate(e.target.value);
+    const handleInterestPer = (e) => setInterestPer(e.target.value);
 
     return (
         
@@ -118,12 +124,24 @@ export function ListElement(props) {
                                                   value={notes}/>
                                        </div>
                                    </div>
-                                   <div className="row">
+                                   <div className="mb-3 row">
                                        <label className=" col-3 col-form-label">Datum: </label>
                                        <div className="col-9">
                                            <input className="form-control" type="date" value={date}
                                                   onChange={(e) => handleDate(e)}/>
                                        </div>
+                                   </div>
+                                   <div className="mb-3 row">
+                                         <label className="col-3 col-form-label">Zins: </label>
+                                              <div className="col-9">
+                                                 <input className="form-control " type="number" onChange={handleInterestRate} value={interestRate}/>
+                                              </div>
+                                   </div>
+                                   <div className="mb-3 row">
+                                          <label className="col-3 col-form-label">Fällig: </label>
+                                                <div className="col-9">
+                                                    <input className="form-control " type="number" onChange={handleInterestPer} value={interestPer}/>
+                                                </div>
                                    </div>
                                </div>
                            </Modal.Body>

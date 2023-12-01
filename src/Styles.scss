@@ -133,8 +133,127 @@
         }
       }
 
+        .transactionCardStyle {
+              padding: 0;
+              margin:  10px;
+
+             height: 210px;
+             width: 200px;
+              margin-left: auto;
+              margin-right: auto;
+             // border-radius: 50px;
+
+
+             /* @include media-breakpoint-down(sm) {
+                height: 120px;
+                width: 180px;
+              } */
+
+          /*    @include media-breakpoint-down(xl) {
+                height: 90px;
+                width: 270px;
+              }
+
+              @include media-breakpoint-down(lg) {
+                height: 90px;
+                width: 180px;
+                margin-left: 5px;
+                margin-right: 5px;
+              } */
+
+              .logoHull {
+
+                .logo {
+                  font-size: 500%;
+                  text-align: center;
+                  font-weight: bold;
+                  font-family: Arial;
+                  line-height: normal;
+                  text-transform: uppercase;
+
+                  color: rgba(#ffffff,0.4);
+                  margin-bottom: 0;
+                  @include media-breakpoint-down(sm) {
+                    font-size: 300%;
+                    margin-bottom: 0;
+                  }
+
+                }
+              }
+
+              .card-body {
+                padding-bottom: 0;
+
+                .punktHull {
+                  display: flex;
+                    flex-direction: column;
+                  font-size: 100%;
+                  .punkt {
+                    align-self: center;
+                    width: 100%;
+                    font-family: Arial;
+                    margin-bottom: 0;
+                    font-weight: bold;
+                    font-size: 12px;//18px;
+                    color: white;
+
+                    @include media-breakpoint-down(sm) {
+                      font-size: 12px;
+                      margin-bottom: 0;
+                    }
+                  }
+
+                  .transactionAmountRed {
+                    color: FireBrick;
+                  }
+
+                  .transactionAmountGreen {
+                    color: ForestGreen;
+                  }
+
+                  .transaktionWhite {
+                   color: white;
+                  }
+
+                  .punktAmount {
+                    font-family: Arial;
+                    width: 100%;
+                    align-self: end;
+                    color: white;
+                    margin-bottom: 0;
+                    font-size: 12px;
+                    @include media-breakpoint-down(sm) {
+                      font-size: 12px;
+                      margin-bottom: 0;
+                    }
+                  }
+                }
+              }
+
+
+              .buttonHull {
+                display: grid;
+                .bearbeitungsButton {
+                  background-color: transparent;
+                  border-color: transparent;
+                  justify-self: end;
+                  position: absolute;
+                  top: 0px;
+                  right: 7px;
+                }
+              }
+            }
+
+      .cardColourGrey {
+       //background-color: #1d2126 ;
+        // background-color: #293133;
+       //background-color: #1f2429;
+       background-color: #353b3f;
+      }
+
       .cardColourRed {
         background-color: #bc4040 //darkred;  #bc4040
+
       }
 
       .cardColourRed:hover {
