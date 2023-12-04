@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {Col, Row, Card, Button, Modal} from "react-bootstrap";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPen} from '@fortawesome/free-solid-svg-icons';
@@ -83,6 +83,16 @@ export function ListElement(props) {
     const handleDelete = () => {
         props.deletePunkt(props.item.itId);
     }
+
+    const MINUTE_MS = 60000;
+
+   /* useEffect(() => {
+      const interval = setInterval(() => {
+        console.log('Logs every minute');
+      }, MINUTE_MS);
+
+      return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+    }, []) */
 
 
     const handleShow = () => setShowM(true);

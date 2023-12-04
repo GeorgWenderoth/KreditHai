@@ -23,21 +23,46 @@ class App extends React.Component {
             amount: '',
             showM: false,
             transactions: [],
+            deptOfAllDebtorsCombined: 0,
+            isUpdatingDebts: false,
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.deleteAllDoneItems = this.deleteAllDoneItems.bind(this);
+       // this.updateInterval = this.updateInterval.bind(this);
     }
 
     componentDidMount() {
         console.log("start");
         this.backBoth();
+       // this.updateAllDeptTransactions();
+        //this.updateInterval = setInterval(this.updateAllDeptTransactions, 5000);
+        this.updateInterval = setInterval(() => this.updateAllDeptTransactions(), 15000);
     }
+
 
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         console.log("Update: Punkt: ", this.state.punkt);
         console.log("Update: PunktER: ", this.state.punktErledigt);
-        this.updateAllDeptTransactions();
+       /* if(this.state.deptOfAllDebtorsCombined === prevState.deptOfAllDebtorsCombined){
+            this.updateAllDeptTransactions();
+        } */
+       /*if (this.state.deptOfAllDebtorsCombined !== prevState.deptOfAllDebtorsCombined) {
+           // Ensure that an update is necessary to avoid infinite loop
+           if (!this.state.isUpdatingDebts) {
+             this.setState({ isUpdatingDebts: true }, () => {
+               // Call the function and reset the flag after the update
+               this.updateAllDeptTransactions();
+               this.setState({ isUpdatingDebts: false });
+             });
+           }
+         } */
+       // this.updateAllDeptTransactions();
+    }
+
+    componentWillUnmount() {
+      // Clear the interval to avoid memory leaks when the component is unmounted
+      clearInterval(this.updateInterval);
     }
 
 
@@ -188,70 +213,113 @@ class App extends React.Component {
                   // punkt.forEach((element) => console.log(element.itId));
                 }; */
 
+
+
         updateAllDeptTransactions() {
           console.log("updateAllDeptTransactions");
           const currentDate = new Date();
           const currentDateISO = currentDate.toISOString().split('T')[0];
             let payDays;
-            let combinedDept = 0;
+            //let combinedDept = 0;
+            let deptOfAllDebtorsCombined = this.state.deptOfAllDebtorsCombined;
             let shouldBeUpdated = false;
           // Clone the punkt array
           let punk = [...this.state.punkt];
-
+           // goint trhu eatch item / deptor
           const updatedPunkt = this.state.punkt.map((item) => {
-                      let combinedDept = 0;
+
 
                                                          // Clone the item to avoid mutating the state directly
                                                          const updatedItem = { ...item };
-                                                         console.log("item notizen: ", updatedItem.notizen);
+                                                                console.log("item notizen: ", updatedItem.notizen);
 
                                                          const transactions = updatedItem.transactions || [];
-                                                         console.log("tl: ", transactions.length);
-
+                                                         const updatedTransactions = [];
+                                                         //hier is das problem 0
+                                                         let combinedTransactionsDept = 0;
+                                                         //test
+                                                                let addingAllOriginalTransactionLendigs = 0;
+                                                         // Going thru the transactions
                                                          transactions.forEach((transaction) => {
-                                                           const borrowDate = new Date(transaction.date);
-                                                           const timePassedMS = currentDate - borrowDate;
-                                                           payDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
 
-                                                           console.log(updatedItem.notizen, " days passed: ", payDays);
-                                                           console.log("transactions: ", transaction);
-                                                           console.log(transaction.interestPer);
-                                                           console.log(transaction.interest);
+                                                               // setting up dates and times
+                                                               const borrowDate = new Date(transaction.date);
+                                                               const timePassedMS = currentDate - borrowDate;
+                                                               payDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
+                                                               let transactionDept= Number(transaction.betrag);
+                                                               console.log(updatedItem.notizen, " days passed: ", payDays);
+                                                               //console.log("transactions: ", transaction);
+                                                               console.log(transaction.interestPer);
+                                                               console.log(transaction.interest);
 
-                                                           if (payDays >= transaction.interestPer) {
-                                                             console.log("Zinsen");
-                                                             console.log("trnsaction.dept: ", transaction.dept);
-                                                             let transactionDept= Number(transaction.dept);
-                                                             let totalDept = transactionDept;
-                                                                  console.log("start dept: ", totalDept);
-                                                             for (let i = 0; i < payDays; i++) {
 
-                                                               const interest = totalDept * (transaction.interest / 100);
-                                                               console.log("interest: ", interest);
-                                                               totalDept += interest;
-                                                               console.log("curentDept(loop): ", totalDept);
-                                                             }
 
-                                                             console.log("totalDept: ", totalDept);
-                                                             if(transaction.dept < totalDept){
-                                                              transaction.dept = totalDept;
-                                                             }
 
-                                                             combinedDept += totalDept;
+                                                               // appliing interesst to a single transaction
+                                                                // when more days have passed then agreed interesst days
+                                                                        //(important here is if its empty or 0, how should the logic work? with 0 you could have one interation tho intersst mid be applied
+                                                               if (payDays >= transaction.interestPer && transaction.interestPer > 0) {
+                                                                    console.log("Zinsen");
+                                                                    console.log("trnsaction.dept: ", transaction.dept);
 
-                                                           }
+
+
+                                                                    let calculatedDept = transactionDept;
+                                                                    //combinedTransactionsDept = item.betrag;
+                                                                      console.log("start dept: ", calculatedDept);
+
+                                                                    // calculating the dept with interesst
+                                                                    // calculating calculatedDept
+                                                                    for (let i = 0; i <= payDays; i++) {
+                                                                        const interest = calculatedDept * (transaction.interest / 100);
+                                                                            console.log("interest: ", interest);
+                                                                            console.log("curentDept(loop) before: ", calculatedDept);
+                                                                        calculatedDept += interest;
+                                                                            console.log("curentDept(loop): ", calculatedDept);
+                                                                            console.log("test: ", payDays, " ", i);
+                                                                    };
+
+                                                                    console.log("totalDept: ", calculatedDept);
+                                                                 //was soll das?
+                                                              /*   if(transaction.dept < calculatedDept){
+                                                                  transaction.dept = calculatedDept;
+                                                                 } */
+                                                                    //updating the transacton dept to the depth with interesst
+                                                                    transaction.dept = calculatedDept;
+
+
+                                                                    //adding the transaction dept with interesst to the overall dept
+                                                                    combinedTransactionsDept += calculatedDept;
+                                                                            console.log("combined Dept after update: ", combinedTransactionsDept);
+                                                               } else {
+                                                                    //
+                                                                    combinedTransactionsDept += transactionDept;
+                                                               }
+
+                                                                // add the updated transaction to the
+                                                                updatedTransactions.push(transaction);
+                                                                    // adding
+                                                                    addingAllOriginalTransactionLendigs += Number(transaction.betrag);
+
                                                          });
-                                                              if ( combinedDept > item.betrag){
-                                                                console.log("combined Dept (somethings wrong?): ", combinedDept);
+                                                         console.log("addingAllOriginalTransactionLendigs: ", addingAllOriginalTransactionLendigs);
+
+                                                                   //console.log( combinedTransactionsDept < item.betrag)
+                                                            // If the dept has risen <
+                                                               // potencial problem if transactions change without changing tzhe overall sum of the person.
+                                                              if(combinedTransactionsDept !== item.betrag){
+                                                                    deptOfAllDebtorsCombined +=  combinedTransactionsDept;
+                                                                    console.log("combined Dept (somethings wrong?): ", combinedTransactionsDept);
                                                                 shouldBeUpdated = true;
-                                                                item.betrag = combinedDept;
+                                                                updatedItem.betrag = combinedTransactionsDept;
+                                                                    console.log("updatedItem.betrag after update: ", item.betrag, " ", updatedItem.betrag);
                                                              } else {
-                                                             console.log("combined Dept (somethings wrong?): ", combinedDept);
+                                                                    console.log("combined Dept else(somethings wrong?): ", combinedTransactionsDept);
                                                              }
 
                                                          // Update the transactions array in the cloned item
-                                                         updatedItem.transactions = transactions;
-
+                                                         updatedItem.transactions = updatedTransactions;
+                                                           console.log("updatedItem: ", updatedItem);
                                                          return updatedItem;
                                                    });
 
@@ -261,8 +329,8 @@ class App extends React.Component {
 
              console.log("statecalled:", updatedPunkt)
              //updatePunkt.betrag = combinedDept;
-              //this.setState({ punkt: updatedPunkt });
-              this.callState( updatedPunkt);
+              this.setState({ punkt: updatedPunkt });
+             // this.callState( updatedPunkt);
              } else {
              console.log("shouldBeUpdated: ", shouldBeUpdated);
              }

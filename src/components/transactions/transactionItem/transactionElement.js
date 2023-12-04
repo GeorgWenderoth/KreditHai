@@ -115,10 +115,10 @@ export function TransactionElement(props) {
 
                 <div className="punktHull">
                     <p className="punkt">{props.item.todoPunkt}</p>
-                    <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{dept}</p>
+                    <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{props.item.dept}</p>
                     <p className="transaktionWhite">{props.item.notizen} </p>
                     <p className="transaktionWhite">{props.item.date}</p>
-                    <p className="transaktionWhite">{props.item.interestRate}%</p>
+                    <p className="transaktionWhite">{props.item.interest} %</p>
                     <p className="transaktionWhite">Fällig alle: {props.item.interestPer} Tage</p>
                     <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{props.item.betrag}</p>
                 </div>
