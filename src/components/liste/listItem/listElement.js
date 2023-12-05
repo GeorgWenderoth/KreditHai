@@ -167,7 +167,7 @@ export function ListElement(props) {
                
                 <div className="punktHull">
                     <p className="punkt">{props.item.todoPunkt}</p>
-                    <p>{props.item.betrag}</p>
+                    <p> {Number(props.item.betrag).toFixed(2)}</p>
                 </div>
             </Card.Body>
         </Card>

@@ -23,6 +23,8 @@ export function TransactionElement(props) {
     const [displayColour, setDisplayColour] = useState(props.item.betrag >= 0 ? true : false );
     const [dept, setDept] = useState(props.item.betrag);
 
+
+
     /**
      * Speichert die Anzahl onchange in den State
      * @param e
@@ -115,7 +117,7 @@ export function TransactionElement(props) {
 
                 <div className="punktHull">
                     <p className="punkt">{props.item.todoPunkt}</p>
-                    <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{props.item.dept}</p>
+                    <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } > {Number(props.item.dept).toFixed(2)}</p>
                     <p className="transaktionWhite">{props.item.notizen} </p>
                     <p className="transaktionWhite">{props.item.date}</p>
                     <p className="transaktionWhite">{props.item.interest} %</p>

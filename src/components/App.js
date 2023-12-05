@@ -36,7 +36,13 @@ class App extends React.Component {
         this.backBoth();
        // this.updateAllDeptTransactions();
         //this.updateInterval = setInterval(this.updateAllDeptTransactions, 5000);
-        this.updateInterval = setInterval(() => this.updateAllDeptTransactions(), 15000);
+       // this.updateInterval = setInterval(() => this.updateAllDeptTransactions(), 15000);
+       setTimeout(() => {
+             this.updateAllDeptTransactions();
+
+             // Setze den Interval, um updateAllDeptTransactions alle 5 Minuten aufzurufen
+             this.updateInterval = setInterval(() => this.updateAllDeptTransactions(), 300000);
+           }, 15000);
     }
 
 
@@ -292,7 +298,8 @@ class App extends React.Component {
                                                                     combinedTransactionsDept += calculatedDept;
                                                                             console.log("combined Dept after update: ", combinedTransactionsDept);
                                                                } else {
-                                                                    //
+                                                                    // adding transaction.dept = transactionDept ?? würde es korrigieren, allerdings könnte es in der zukunft heisen das wenn nichts berechnet wird es zurük gesetzt wird.
+                                                                    transaction.dept = transactionDept;
                                                                     combinedTransactionsDept += transactionDept;
                                                                }
 
