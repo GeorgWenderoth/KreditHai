@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import "./App.scss";
-import {Button} from "react-bootstrap";
+import {Button, Modal} from "react-bootstrap";
 import {ToDoHeader} from "./header/toDoHeader";
 import {BereichUeberschrift} from "./ueberschrift/bereichUeberschrift";
 import {ContainerListe} from "./liste/containerListe";
@@ -92,6 +92,7 @@ class App extends React.Component {
      */
 
     handleSubmit = (value) => {
+
         if (value !== undefined) { 
             console.log("submitValue:", value);
             const trim = value.trim();
@@ -530,6 +531,8 @@ class App extends React.Component {
              punkt.splice(indexItem, 1);
              this.setState({punkt: punkt});
         }
+
+
 
 
     render() {

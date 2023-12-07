@@ -1,4 +1,4 @@
-import {Button} from "react-bootstrap";
+import {Button, Modal} from "react-bootstrap";
 import React, {useState} from "react";
 import "./header.scss";
 import {ErrorMessage, Formik, Form, Field} from 'formik';
@@ -6,13 +6,26 @@ import {ErrorMessage, Formik, Form, Field} from 'formik';
 
 export function ToDoHeader(props){
 
+
     /**
      * Übergibt eingabe (Itemname) an props.handleSubmit
      * @param event
      */
+
+     const onSubmit = async (values, { setSubmitting }) => {
+
+       try {
+         await props.handleSubmit(values.todopunkt);
+         // Weitere Logik nach dem erfolgreichen Absenden
+       } catch (error) {
+         // Handle Fehler, falls erforderlich
+       } finally {
+         setSubmitting(false);
+       }
+     };
    
 
-    const onSubmit = (values, { setSubmitting}) => {
+    /*const onSubmit = (values, { setSubmitting}) => {
         props.handleSubmit(values.todopunkt);
         setSubmitting(false);
         /* props.handleSubmit(values.todopunkt).finally( ()=> {
@@ -20,7 +33,9 @@ export function ToDoHeader(props){
                   });
                   */
 
-    }
+   /* } */
+
+
     /**
      * Überprüft ob die Eingaben korrekt sind, gibt Fehlermeldung aus wenn nicht
      * @param values
@@ -40,6 +55,11 @@ export function ToDoHeader(props){
          }
         return errors;
     }
+
+
+
+
+
 
     /**
      * speichert veränderungen bei der eingabe onChange im state
@@ -65,6 +85,8 @@ export function ToDoHeader(props){
                             <div className="col-auto">
                                 <Button type="submit" className="btn-secondary">Hinzufügen</Button>
                             </div>
+
+
                            
                         </Form>
                     )

@@ -124,6 +124,9 @@ export function TransactionElement(props) {
                     <p className="transaktionWhite">Fällig alle: {props.item.interestPer} Tage</p>
                     <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{props.item.betrag}</p>
                 </div>
+
+
+
             </Card.Body>
         </Card>
     )
