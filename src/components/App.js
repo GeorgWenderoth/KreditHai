@@ -188,6 +188,8 @@ class App extends React.Component {
                                                    "notizen": notizen,
                                                    "interest": interestRate,
                                                    "interestPer": interestPer,
+                                                   "paidBack": 0,
+                                                   "payBackTransactions": [],
                                                };
               // cTransactions.push(newTransaction);
                if(Array.isArray(cTransactions)){
@@ -253,7 +255,10 @@ class App extends React.Component {
                                                                const borrowDate = new Date(transaction.date);
                                                                const timePassedMS = currentDate - borrowDate;
                                                                payDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
+
+                                                               // hier muss das bereits mit dem baidBack betrag verrechnet werden! was wenn es drüber geht
                                                                let transactionDept= Number(transaction.betrag);
+
                                                                console.log(updatedItem.notizen, " days passed: ", payDays);
                                                                //console.log("transactions: ", transaction);
                                                                console.log(transaction.interestPer);
@@ -270,8 +275,9 @@ class App extends React.Component {
                                                                     console.log("trnsaction.dept: ", transaction.dept);
 
 
+                                                                    // neu: +(-) paid back,  funktionierts?, wie  mache ich das bei plus/ minus beträgen,
+                                                                    let calculatedDept = transactionDept + transaction.paidBack;
 
-                                                                    let calculatedDept = transactionDept;
                                                                     //combinedTransactionsDept = item.betrag;
                                                                       console.log("start dept: ", calculatedDept);
 
@@ -287,10 +293,7 @@ class App extends React.Component {
                                                                     };
 
                                                                     console.log("totalDept: ", calculatedDept);
-                                                                 //was soll das?
-                                                              /*   if(transaction.dept < calculatedDept){
-                                                                  transaction.dept = calculatedDept;
-                                                                 } */
+
                                                                     //updating the transacton dept to the depth with interesst
                                                                     transaction.dept = calculatedDept;
 
@@ -338,7 +341,7 @@ class App extends React.Component {
              console.log("statecalled:", updatedPunkt)
              //updatePunkt.betrag = combinedDept;
               this.setState({ punkt: updatedPunkt });
-             // this.callState( updatedPunkt);
+
              } else {
              console.log("shouldBeUpdated: ", shouldBeUpdated);
              }
@@ -346,55 +349,72 @@ class App extends React.Component {
              };
 
 
-             callState(punkt){
-             this.setState({ punkt });
-             }
+    updateTransaction(id, tId, title, betrag,datum, notizen){
+                     console.log("updateTransaction Test: ", id, tId, title, betrag, datum, notizen,);
+
+        const updatedPunkt = this.state.punkt.map((item) => {
+                     const updatedItem = { ...item };
+                     const transactions = updatedItem.transactions || [];
+
+                   // let indexTrans = transactions.indexOf(transaction.tId === tId);
+                    let tIndex = transactions.map( transaction => transaction.tId).indexOf(tId);
+                    console.log("tIndex: ", tIndex);
+
+                     transactions.forEach((transaction) => {
+                        if(transaction.tId === tId){
+                        console.log("transaction found: ", transaction.betrag, transaction.notizen);
+                        console.log("neuer rest schulden: ", Number(transaction.dept + betrag));
+                        transaction.paidBack += Number(betrag);
+                        console.log("transactionpaidback: ", transaction.paidBack)
+                        }
+                     });
+        });
+    };
+
+    deleteTransaction(id, tId, title, betrag,datum, notizen){
+                         console.log("deleateTransaction Test: ", id, tId, title, betrag, datum, notizen,);
+                          const punktArray = [...this.state.punkt];
+                          const indexItem = this.state.punkt.map(item => item.itId).indexOf(id);
+                          console.log("indexItem: ", indexItem);
+                          //const updatePunkt =
+                              let transactions =  punktArray[indexItem].transactions;
+                              let tIndex = transactions.map( transaction => transaction.tId).indexOf(tId);
+                                                                            console.log("tIndex: ", tIndex);
+                                                         console.log("transaction: ", transactions[tIndex]);
+                                                        transactions.splice(tIndex, 1);
+            punktArray[indexItem].transactions = transactions;
+            /*const updatedPunkt = this.state.punkt.map((item) => {
+                         const updatedItem = { ...item };
+                         const transactions = updatedItem.transactions || [];
+
+                          let tIndex = transactions.map( transaction => transaction.tId).indexOf(tId);
+                                              console.log("tIndex: ", tIndex);
+                           console.log("transaction: ", transactions[tIndex]);
+                          transactions.splice(tIndex, 1);
+
+                         /*transactions.forEach((transaction) => {
+                            if(transaction.tId === tId){
+                            console.log("transaction found: ", transaction.betrag, transaction.notizen);
+                            console.log("neuer rest schulden: ", Number(transaction.dept + betrag));
+                            transaction.paidBack += Number(betrag);
+                            console.log("transactionpaidback: ", transaction.paidBack)
+                            }
+                         }); */
+                    /*     updatedItem.transactions = transactions;
+                         return updatedItem;
+            }); */
+
+            this.setState({punkt: punktArray});
+            // vorsicht ganz unten ist anders, wir testen das einfach mal
+            localStorage.setItem('punkt', JSON.stringify(punktArray));
+        };
 
 
 
-      /*  updateAllDeptTransactions(){
-            console.log("updateAllDeptTransactions");
-            let punkt = [...this.state.punkt]
-            console.log(punkt);
-           // punkt.forEach((element) => this.updateDeptTransactions(element.itId));
-           punkt.map((item) => {
-          // punkt.forEach((element) => console.log(element.itId));
-           let date = new Date();
-                              let datum =  date.toISOString().split('T')[0];
 
 
 
 
-                      let transactions = item.transactions;
-                      console.log("tl: ", transactions.length);
-
-                      for(let y = 0; y < transactions.length; y++ ){
-                      let borrowDate = new Date(transactions[y].date);
-                        let timePassedMS =  date - borrowDate;
-                          let payDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
-                        console.log(item.notizen, " days passed: ", payDays);
-                        console.log("transactions: ", transactions[y]);
-                        console.log(transactions[y].interestPer);
-                        console.log(transactions[y].interest)
-                         if( payDays >= transactions[y].interestPer ){
-                              console.log("Zinsen");
-                              let total = Number(transactions[y].dept);
-                              for(let i = 0; i< payDays; i++ ){
-                                           let  interest = total * (transactions[y].interest/ 100);
-                                              total += interest;
-                                          }
-                               console.log("total: ", total);
-                               transactions[y].dept = total;
-                               item.transactions = transactions
-                         }
-
-                      };
-                      let punkt = [...this.state.punkt];
-                      let i = punkt.map(a => a.itId).indexOf(item.itId);
-                      punkt[i] = item;
-                      this.setState({punkt});
-                      };
-        }; */
 
         updateDeptTransactions(item){
            // console.log("updateDeptTransaction: ", item);
@@ -561,7 +581,11 @@ class App extends React.Component {
                         löschen</Button>
                 </div>
 
-                                <TransactionListe itemList={this.state.transactions}/>
+                                <TransactionListe
+                                               itemList={this.state.transactions}
+                                               updateTransaction={(id, tId, title, betrag,datum, notizen)=> this.updateTransaction(id, tId, title, betrag,datum, notizen)}
+                                               deleteTransaction={(id, tId)=> this.deleteTransaction(id, tId)}
+                                />
             </div>
         )
     }

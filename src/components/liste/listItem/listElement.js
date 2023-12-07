@@ -156,7 +156,7 @@ export function ListElement(props) {
                                </div>
                            </Modal.Body>
                            <Modal.Footer>
-                           <Button variant="danger" size="sm"  onClick={handleDelete}>Abbrechen(->Löschen)</Button>
+                           <Button variant="danger" size="sm"  onClick={handleDelete}>Löschen</Button>
                            <Button variant="secondary" size="sm"
                                                  onClick={handleCloseWithoutSaving}>Abbrechen</Button>
                                <Button variant="primary" size="sm" onClick={handleClose}>Änderung Speichern</Button>

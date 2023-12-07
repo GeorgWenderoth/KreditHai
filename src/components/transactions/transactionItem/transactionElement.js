@@ -49,6 +49,27 @@ export function TransactionElement(props) {
 
     }
 
+    const handleClose = () => {
+            console.log("notizen: " + notes);
+           const ob = {
+               "itId": props.item.itId,
+               "todoPunkt": titel,
+               "betrag": betrag,
+               "strich": false,
+               "datum": date,
+               "notizen": notes
+           }
+            props.updateTransaction(props.item.itId, props.item.tId, titel, betrag, date, notes);
+
+            setDisplayColour(betrag >= 0 ? true : false);
+            setShowM(false);
+        }
+
+    const handleDelete = () => {
+        props.deleteTransaction(props.item.itId, props.item.tId);
+        setShowM(false);
+    }
+
     /**
      * Schließt Modal und speichert die änderungen im Localstorage (LocalStorageCalls) und im Frontend State (props.updatePunkt)
      */
@@ -108,10 +129,11 @@ export function TransactionElement(props) {
         <Card className=  { "transactionCardStyle " + (displayColour ? 'cardColourGrey' : 'cardColourGrey')}
               style={{border: '3px', cursor: "pointer"}}
               key={props.item.itId.toString()}>
+
             <div className="buttonHull">
-
+                <Button style={{display: displayButton}} onClick={handleShow}
+                        className="bearbeitungsButton"><FontAwesomeIcon className="form-icon" icon={faPen}/></Button>
             </div>
-
 
             <Card.Body >
 
@@ -125,7 +147,47 @@ export function TransactionElement(props) {
                     <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{props.item.betrag}</p>
                 </div>
 
+                <Modal show={showM} onHide={handleCloseWithoutSaving}>
+                           <Modal.Header closeButton>
+                               <Modal.Title>
+                                   Rückzahlung
+                               </Modal.Title>
+                           </Modal.Header>
+                           <Modal.Body>
+                               <div className="container">
+                                   <div className="mb-3 row">
+                                       <label className="col-3 col-form-label">Betrag: </label>
+                                       <div className="col-9">
+                                           <input className="form-control " type="number" onChange={handleBetrag} value={betrag}/>
+                                       </div>
+                                   </div>
+                                   <div className="mb-3 row">
+                                       <label className="col-3 col-form-label">Notiz: </label>
+                                       <div className="col-9">
+                                           <input className="form-control" type="text"
+                                                  placeholder="Notizen"
+                                                  onChange={handleNotes}
+                                                  value={notes}/>
+                                       </div>
+                                   </div>
+                                   <div className="mb-3 row">
+                                       <label className=" col-3 col-form-label">Datum: </label>
+                                       <div className="col-9">
+                                           <input className="form-control" type="date" value={date}
+                                                  onChange={(e) => handleDate(e)}/>
+                                       </div>
+                                   </div>
 
+
+                               </div>
+                           </Modal.Body>
+                           <Modal.Footer>
+                           <Button variant="danger" size="sm"  onClick={handleDelete}>Löschen</Button>
+                           <Button variant="secondary" size="sm"
+                                                 onClick={handleCloseWithoutSaving}>Abbrechen</Button>
+                               <Button variant="primary" size="sm" onClick={handleClose}>Änderung Speichern</Button>
+                           </Modal.Footer>
+                       </Modal>
 
             </Card.Body>
         </Card>
