@@ -381,8 +381,7 @@ class App extends React.Component {
                                   let tIndex = transactions.map( transaction => transaction.tId).indexOf(tId);
                                                                                 console.log("tIndex: ", tIndex);
                                                              console.log("transaction: ", transactions[tIndex]);
-                                                            // transactions[i].payBackTransaction
-                                                           // transactions.splice(tIndex, 1);
+
                                     let payBackTransactionId = LocalStorageIdService();
                                     let newPayBackTransaction = {
                                                                     "itId": id,
