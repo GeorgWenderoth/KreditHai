@@ -276,7 +276,7 @@ class App extends React.Component {
 
 
                                                                     // neu: +(-) paid back,  funktionierts?, wie  mache ich das bei plus/ minus beträgen,
-                                                                    let calculatedDept = transactionDept + transaction.paidBack;
+                                                                    let calculatedDept = transactionDept; //+ transaction.paidBack;
 
                                                                     //combinedTransactionsDept = item.betrag;
                                                                       console.log("start dept: ", calculatedDept);
@@ -349,14 +349,14 @@ class App extends React.Component {
              };
 
 
-    updateTransaction(id, tId, title, betrag,datum, notizen){
+  /*  updateTransaction(id, tId, title, betrag,datum, notizen){
                      console.log("updateTransaction Test: ", id, tId, title, betrag, datum, notizen,);
 
         const updatedPunkt = this.state.punkt.map((item) => {
                      const updatedItem = { ...item };
                      const transactions = updatedItem.transactions || [];
 
-                   // let indexTrans = transactions.indexOf(transaction.tId === tId);
+
                     let tIndex = transactions.map( transaction => transaction.tId).indexOf(tId);
                     console.log("tIndex: ", tIndex);
 
@@ -369,7 +369,47 @@ class App extends React.Component {
                         }
                      });
         });
-    };
+    }; */
+
+    updateTransaction(id, tId, title, betrag, harken,datum, notizen){
+                             console.log("deleateTransaction Test: ", id, tId, title, betrag, datum, notizen,);
+                              const punktArray = [...this.state.punkt];
+                              const indexItem = this.state.punkt.map(item => item.itId).indexOf(id);
+                              console.log("indexItem: ", indexItem);
+                              //const updatePunkt =
+                                  let transactions =  punktArray[indexItem].transactions;
+                                  let tIndex = transactions.map( transaction => transaction.tId).indexOf(tId);
+                                                                                console.log("tIndex: ", tIndex);
+                                                             console.log("transaction: ", transactions[tIndex]);
+                                                            // transactions[i].payBackTransaction
+                                                           // transactions.splice(tIndex, 1);
+                                    let payBackTransactionId = LocalStorageIdService();
+                                    let newPayBackTransaction = {
+                                                                    "itId": id,
+                                                                    "tId": payBackTransactionId,
+                                                                    "payBackToId": tId,
+                                                                    "name": title,
+                                                                    "betrag": betrag,
+
+                                                                    "strich": harken,
+                                                                    "date": datum,
+                                                                    "notizen": notizen,
+
+
+                                                                };
+                                    const cPayBackTransactions =   transactions[tIndex].payBackTransactions
+                                                            cPayBackTransactions.push(newPayBackTransaction);
+                                    transactions[tIndex].payBackTransactions = cPayBackTransactions;
+
+
+
+                punktArray[indexItem].transactions = transactions;
+
+
+                this.setState({punkt: punktArray});
+                // vorsicht ganz unten ist anders, wir testen das einfach mal
+                localStorage.setItem('punkt', JSON.stringify(punktArray));
+            };
 
     deleteTransaction(id, tId, title, betrag,datum, notizen){
                          console.log("deleateTransaction Test: ", id, tId, title, betrag, datum, notizen,);
@@ -383,26 +423,7 @@ class App extends React.Component {
                                                          console.log("transaction: ", transactions[tIndex]);
                                                         transactions.splice(tIndex, 1);
             punktArray[indexItem].transactions = transactions;
-            /*const updatedPunkt = this.state.punkt.map((item) => {
-                         const updatedItem = { ...item };
-                         const transactions = updatedItem.transactions || [];
 
-                          let tIndex = transactions.map( transaction => transaction.tId).indexOf(tId);
-                                              console.log("tIndex: ", tIndex);
-                           console.log("transaction: ", transactions[tIndex]);
-                          transactions.splice(tIndex, 1);
-
-                         /*transactions.forEach((transaction) => {
-                            if(transaction.tId === tId){
-                            console.log("transaction found: ", transaction.betrag, transaction.notizen);
-                            console.log("neuer rest schulden: ", Number(transaction.dept + betrag));
-                            transaction.paidBack += Number(betrag);
-                            console.log("transactionpaidback: ", transaction.paidBack)
-                            }
-                         }); */
-                    /*     updatedItem.transactions = transactions;
-                         return updatedItem;
-            }); */
 
             this.setState({punkt: punktArray});
             // vorsicht ganz unten ist anders, wir testen das einfach mal
