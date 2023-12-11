@@ -228,6 +228,7 @@ class App extends React.Component {
           console.log("updateAllDeptTransactions");
           const currentDate = new Date();
           const currentDateISO = currentDate.toISOString().split('T')[0];
+            let passedDays;
             let payDays;
             //let combinedDept = 0;
             let deptOfAllDebtorsCombined = this.state.deptOfAllDebtorsCombined;
@@ -254,7 +255,9 @@ class App extends React.Component {
                                                                // setting up dates and times
                                                                const borrowDate = new Date(transaction.date);
                                                                const timePassedMS = currentDate - borrowDate;
-                                                               payDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
+                                                               passedDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
+
+                                                               payDays = passedDays / transaction.interestPer;
 
                                                                // hier muss das bereits mit dem baidBack betrag verrechnet werden! was wenn es drüber geht
                                                                let transactionDept= Number(transaction.betrag);
@@ -265,7 +268,7 @@ class App extends React.Component {
                                                                console.log(transaction.interest);
 
 
-
+                                                              //  transaction.payBackTransactions.map()
 
                                                                // appliing interesst to a single transaction
                                                                 // when more days have passed then agreed interesst days
