@@ -252,12 +252,32 @@ class App extends React.Component {
                                                          // Going thru the transactions
                                                          transactions.forEach((transaction) => {
 
+
+
+
+
                                                                // setting up dates and times
                                                                const borrowDate = new Date(transaction.date);
                                                                const timePassedMS = currentDate - borrowDate;
                                                                passedDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
 
                                                                payDays = passedDays / transaction.interestPer;
+                                                                try {
+                                                                 transaction.payBackTransactions.forEach( (payBackTransaction) => {
+                                                                       console.log("payBack: ",payBackTransaction);
+                                                                       console.log("PayBack ",payBackTransaction.date);
+                                                                       let payBackDate = payBackTransaction.date;
+                                                                       timePassedMS = payBackDate - borrowDate;
+                                                                       let pDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
+                                                                       console.log("pDays: ", pDays);
+                                                                                                                                   });
+                                                                } catch(error){
+                                                                //console.log(error);
+                                                                };
+
+
+                                                              // const payBackD = transaction.payBackTransactions[0];
+                                                               //console.log("payBackD: ", payBackD);
 
                                                                // hier muss das bereits mit dem baidBack betrag verrechnet werden! was wenn es drüber geht
                                                                let transactionDept= Number(transaction.betrag);
@@ -374,7 +394,7 @@ class App extends React.Component {
         });
     }; */
 
-    updateTransaction(id, tId, title, betrag, harken,datum, notizen){
+    updateTransaction(id, tId, title, betrag,datum, notizen, harken){
                              console.log("deleateTransaction Test: ", id, tId, title, betrag, datum, notizen,);
                               const punktArray = [...this.state.punkt];
                               const indexItem = this.state.punkt.map(item => item.itId).indexOf(id);
@@ -479,24 +499,7 @@ class App extends React.Component {
         //    cPunkt =
         }
 
-        SPEICHERupdateDeptTransactions(id){
-        console.log("updateDeptTransaction: ", id);
-            let date = new Date();
-                    let datum =  date.toISOString().split('T')[0];
-            let punkt = [...this.state.punkt]
-            let i = punkt.map(a => a.itId).indexOf(id);
-            console.log(punkt[i])
-            let cPunkt = {...punkt[id]};
-            console.log(cPunkt);
-            let transactions = [...cPunkt.transactions];
-            for(let y = 0; y < transactions.lenght; y++ ){
-              let time =  date - transactions[y].date;
-              console.log("time: ", time);
-              /* if( time ){
 
-               } */
-            };
-        }
 
 
 
@@ -606,7 +609,7 @@ class App extends React.Component {
 
                                 <TransactionListe
                                                itemList={this.state.transactions}
-                                               updateTransaction={(id, tId, title, betrag,datum, notizen)=> this.updateTransaction(id, tId, title, betrag,datum, notizen)}
+                                               updateTransaction={(id, tId, title, betrag,datum, notizen,strich)=> this.updateTransaction(id, tId, title, betrag ,datum, notizen, strich)}
                                                deleteTransaction={(id, tId)=> this.deleteTransaction(id, tId)}
                                 />
             </div>

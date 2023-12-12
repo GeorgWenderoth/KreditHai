@@ -59,7 +59,7 @@ export function TransactionElement(props) {
                "datum": date,
                "notizen": notes
            }
-            props.updateTransaction(props.item.itId, props.item.tId, titel, betrag, date, notes);
+            props.updateTransaction(props.item.itId, props.item.tId, titel, betrag, date, notes,false);
 
             setDisplayColour(betrag >= 0 ? true : false);
             setShowM(false);
