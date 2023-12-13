@@ -190,6 +190,7 @@ class App extends React.Component {
                                                    "interestPer": interestPer,
                                                    "paidBack": 0,
                                                    "payBackTransactions": [],
+                                                   "updateDate": datum,
                                                };
               // cTransactions.push(newTransaction);
                if(Array.isArray(cTransactions)){
@@ -257,30 +258,36 @@ class App extends React.Component {
 
 
                                                                // setting up dates and times
-                                                               const borrowDate = new Date(transaction.date);
+                                                               let borrowDate = new Date(transaction.date);
+                                                                let transactionDept;
+                                                                borrowDate = new Date(transaction.updateDate);
+                                                                      transactionDept = Number(transaction.dept);
+
+
+                                                               /*try {
+                                                               const d = new Date(transaction.updateDate);
+                                                               const dISO = d.toISOString().split('T')[0];
+                                                                borrowDate = new Date(transaction.updateDate);
+                                                                transactionDept = Number(transaction.dept);
+
+                                                               } catch (error) {
+                                                                 transactionDept = Number(transaction.betrag);
+                                                               }; */
+
                                                                const timePassedMS = currentDate - borrowDate;
                                                                passedDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
 
+
+
                                                                payDays = passedDays / transaction.interestPer;
-                                                                try {
-                                                                 transaction.payBackTransactions.forEach( (payBackTransaction) => {
-                                                                       console.log("payBack: ",payBackTransaction);
-                                                                       console.log("PayBack ",payBackTransaction.date);
-                                                                       let payBackDate = payBackTransaction.date;
-                                                                       timePassedMS = payBackDate - borrowDate;
-                                                                       let pDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
-                                                                       console.log("pDays: ", pDays);
-                                                                                                                                   });
-                                                                } catch(error){
-                                                                //console.log(error);
-                                                                };
+
 
 
                                                               // const payBackD = transaction.payBackTransactions[0];
                                                                //console.log("payBackD: ", payBackD);
 
                                                                // hier muss das bereits mit dem baidBack betrag verrechnet werden! was wenn es drüber geht
-                                                               let transactionDept= Number(transaction.betrag);
+                                                              // let transactionDept= Number(transaction.betrag);
 
                                                                console.log(updatedItem.notizen, " days passed: ", payDays);
                                                                //console.log("transactions: ", transaction);
@@ -319,7 +326,7 @@ class App extends React.Component {
 
                                                                     //updating the transacton dept to the depth with interesst
                                                                     transaction.dept = calculatedDept;
-
+                                                                    transaction.updateDate = currentDate;
 
                                                                     //adding the transaction dept with interesst to the overall dept
                                                                     combinedTransactionsDept += calculatedDept;
@@ -327,16 +334,18 @@ class App extends React.Component {
                                                                } else {
                                                                     // adding transaction.dept = transactionDept ?? würde es korrigieren, allerdings könnte es in der zukunft heisen das wenn nichts berechnet wird es zurük gesetzt wird.
                                                                     transaction.dept = transactionDept;
+                                                                    //new
+                                                                    transaction.updateDate = currentDate;
                                                                     combinedTransactionsDept += transactionDept;
                                                                }
 
                                                                 // add the updated transaction to the
                                                                 updatedTransactions.push(transaction);
                                                                     // adding
-                                                                    addingAllOriginalTransactionLendigs += Number(transaction.betrag);
+                                                                   // addingAllOriginalTransactionLendigs += Number(transaction.betrag);
 
                                                          });
-                                                         console.log("addingAllOriginalTransactionLendigs: ", addingAllOriginalTransactionLendigs);
+                                                        // console.log("addingAllOriginalTransactionLendigs: ", addingAllOriginalTransactionLendigs);
 
                                                                    //console.log( combinedTransactionsDept < item.betrag)
                                                             // If the dept has risen <
@@ -371,6 +380,153 @@ class App extends React.Component {
 
              };
 
+             SPEICHERupdateAllDeptTransactions() {
+                       console.log("updateAllDeptTransactions");
+                       const currentDate = new Date();
+                       const currentDateISO = currentDate.toISOString().split('T')[0];
+                         let passedDays;
+                         let payDays;
+                         //let combinedDept = 0;
+                         let deptOfAllDebtorsCombined = this.state.deptOfAllDebtorsCombined;
+                         let shouldBeUpdated = false;
+                       // Clone the punkt array
+                       let punk = [...this.state.punkt];
+                        // goint trhu eatch item / deptor
+                       const updatedPunkt = this.state.punkt.map((item) => {
+
+
+                                                                      // Clone the item to avoid mutating the state directly
+                                                                      const updatedItem = { ...item };
+                                                                             console.log("item notizen: ", updatedItem.notizen);
+
+                                                                      const transactions = updatedItem.transactions || [];
+                                                                      const updatedTransactions = [];
+                                                                      //hier is das problem 0
+                                                                      let combinedTransactionsDept = 0;
+                                                                      //test
+                                                                             let addingAllOriginalTransactionLendigs = 0;
+                                                                      // Going thru the transactions
+                                                                      transactions.forEach((transaction) => {
+
+
+
+
+
+                                                                            // setting up dates and times
+                                                                            const borrowDate = new Date(transaction.date);
+                                                                            const timePassedMS = currentDate - borrowDate;
+                                                                            passedDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
+
+                                                                            payDays = passedDays / transaction.interestPer;
+                                                                             try {
+                                                                              transaction.payBackTransactions.forEach( (payBackTransaction) => {
+                                                                                    console.log("payBack: ",payBackTransaction);
+                                                                                    console.log("PayBack ",payBackTransaction.date);
+                                                                                    let payBackDate = payBackTransaction.date;
+                                                                                    timePassedMS = payBackDate - borrowDate;
+                                                                                    let pDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
+                                                                                    console.log("pDays: ", pDays);
+                                                                                                                                                });
+                                                                             } catch(error){
+                                                                             //console.log(error);
+                                                                             };
+
+
+                                                                           // const payBackD = transaction.payBackTransactions[0];
+                                                                            //console.log("payBackD: ", payBackD);
+
+                                                                            // hier muss das bereits mit dem baidBack betrag verrechnet werden! was wenn es drüber geht
+                                                                            let transactionDept= Number(transaction.betrag);
+
+                                                                            console.log(updatedItem.notizen, " days passed: ", payDays);
+                                                                            //console.log("transactions: ", transaction);
+                                                                            console.log(transaction.interestPer);
+                                                                            console.log(transaction.interest);
+
+
+                                                                           //  transaction.payBackTransactions.map()
+
+                                                                            // appliing interesst to a single transaction
+                                                                             // when more days have passed then agreed interesst days
+                                                                                     //(important here is if its empty or 0, how should the logic work? with 0 you could have one interation tho intersst mid be applied
+                                                                            if (payDays >= transaction.interestPer && transaction.interestPer > 0) {
+                                                                                 console.log("Zinsen");
+                                                                                 console.log("trnsaction.dept: ", transaction.dept);
+
+
+                                                                                 // neu: +(-) paid back,  funktionierts?, wie  mache ich das bei plus/ minus beträgen,
+                                                                                 let calculatedDept = transactionDept; //+ transaction.paidBack;
+
+                                                                                 //combinedTransactionsDept = item.betrag;
+                                                                                   console.log("start dept: ", calculatedDept);
+
+                                                                                 // calculating the dept with interesst
+                                                                                 // calculating calculatedDept
+                                                                                 for (let i = 0; i <= payDays; i++) {
+                                                                                     const interest = calculatedDept * (transaction.interest / 100);
+                                                                                         console.log("interest: ", interest);
+                                                                                         console.log("curentDept(loop) before: ", calculatedDept);
+                                                                                     calculatedDept += interest;
+                                                                                         console.log("curentDept(loop): ", calculatedDept);
+                                                                                         console.log("test: ", payDays, " ", i);
+                                                                                 };
+
+                                                                                 console.log("totalDept: ", calculatedDept);
+
+                                                                                 //updating the transacton dept to the depth with interesst
+                                                                                 transaction.dept = calculatedDept;
+
+
+                                                                                 //adding the transaction dept with interesst to the overall dept
+                                                                                 combinedTransactionsDept += calculatedDept;
+                                                                                         console.log("combined Dept after update: ", combinedTransactionsDept);
+                                                                            } else {
+                                                                                 // adding transaction.dept = transactionDept ?? würde es korrigieren, allerdings könnte es in der zukunft heisen das wenn nichts berechnet wird es zurük gesetzt wird.
+                                                                                 transaction.dept = transactionDept;
+                                                                                 combinedTransactionsDept += transactionDept;
+                                                                            }
+
+                                                                             // add the updated transaction to the
+                                                                             updatedTransactions.push(transaction);
+                                                                                 // adding
+                                                                                 addingAllOriginalTransactionLendigs += Number(transaction.betrag);
+
+                                                                      });
+                                                                      console.log("addingAllOriginalTransactionLendigs: ", addingAllOriginalTransactionLendigs);
+
+                                                                                //console.log( combinedTransactionsDept < item.betrag)
+                                                                         // If the dept has risen <
+                                                                            // potencial problem if transactions change without changing tzhe overall sum of the person.
+                                                                           if(combinedTransactionsDept !== item.betrag){
+                                                                                 deptOfAllDebtorsCombined +=  combinedTransactionsDept;
+                                                                                 console.log("combined Dept (somethings wrong?): ", combinedTransactionsDept);
+                                                                             shouldBeUpdated = true;
+                                                                             updatedItem.betrag = combinedTransactionsDept;
+                                                                                 console.log("updatedItem.betrag after update: ", item.betrag, " ", updatedItem.betrag);
+                                                                          } else {
+                                                                                 console.log("combined Dept else(somethings wrong?): ", combinedTransactionsDept);
+                                                                          }
+
+                                                                      // Update the transactions array in the cloned item
+                                                                      updatedItem.transactions = updatedTransactions;
+                                                                        console.log("updatedItem: ", updatedItem);
+                                                                      return updatedItem;
+                                                                });
+
+                          // Update the state with the modified punkt array
+                          if(shouldBeUpdated){
+
+
+                          console.log("statecalled:", updatedPunkt)
+                          //updatePunkt.betrag = combinedDept;
+                           this.setState({ punkt: updatedPunkt });
+
+                          } else {
+                          console.log("shouldBeUpdated: ", shouldBeUpdated);
+                          }
+
+                          };
+
 
   /*  updateTransaction(id, tId, title, betrag,datum, notizen){
                      console.log("updateTransaction Test: ", id, tId, title, betrag, datum, notizen,);
@@ -395,7 +551,7 @@ class App extends React.Component {
     }; */
 
     updateTransaction(id, tId, title, betrag,datum, notizen, harken){
-                             console.log("deleateTransaction Test: ", id, tId, title, betrag, datum, notizen,);
+                             console.log("updateTransaction Test: ", id, tId, title, betrag, datum, notizen,);
                               const punktArray = [...this.state.punkt];
                               const indexItem = this.state.punkt.map(item => item.itId).indexOf(id);
                               console.log("indexItem: ", indexItem);
@@ -423,6 +579,16 @@ class App extends React.Component {
                                                             cPayBackTransactions.push(newPayBackTransaction);
                                     transactions[tIndex].payBackTransactions = cPayBackTransactions;
 
+                                    // funktioniert noch nicht ganz.
+                                    let cDept = transactions[tIndex].dept
+                                    console.log("cDept: ", cDept);
+                                    console.log("betrag: ", betrag);
+                                    let newDept = cDept + Number(betrag);
+                                    console.log("newDept: ", newDept);
+                                    transactions[tIndex].dept = newDept;
+                                    console.log("transaction dept after update: ", transactions[tIndex].dept);
+
+                                    console.log("updateDate: ", transactions[tIndex].updateDate);
 
 
                 punktArray[indexItem].transactions = transactions;
