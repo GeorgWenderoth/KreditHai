@@ -575,17 +575,31 @@ class App extends React.Component {
 
 
                                                                 };
-                                    const cPayBackTransactions =   transactions[tIndex].payBackTransactions
-                                                            cPayBackTransactions.push(newPayBackTransaction);
+
+                                    let cPayBackTransactions =   transactions[tIndex].payBackTransactions
+                                    if(Array.isArray(cPayBackTransactions)){
+                                                  cPayBackTransactions.push(newPayBackTransaction);
+                                                   } else {
+                                                   cPayBackTransactions = [newPayBackTransaction];
+                                                   };
+
                                     transactions[tIndex].payBackTransactions = cPayBackTransactions;
 
                                     // funktioniert noch nicht ganz.
-                                    let cDept = transactions[tIndex].dept
+
+                                    let cDept = transactions[tIndex].dept;
                                     console.log("cDept: ", cDept);
                                     console.log("betrag: ", betrag);
                                     let newDept = cDept + Number(betrag);
+                                    if(transactions[tIndex].dept < 0 && newDept <=0){
+                                        transactions[tIndex].dept = newDept;
+                                    }
+                                    if(transactions[tIndex].dept > 0 && newDept >= 0){
+                                        transactions[tIndex].dept = newDept;
+                                    }
+
                                     console.log("newDept: ", newDept);
-                                    transactions[tIndex].dept = newDept;
+                                   // transactions[tIndex].dept = newDept;
                                     console.log("transaction dept after update: ", transactions[tIndex].dept);
 
                                     console.log("updateDate: ", transactions[tIndex].updateDate);

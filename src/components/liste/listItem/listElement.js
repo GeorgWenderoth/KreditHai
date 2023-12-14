@@ -26,6 +26,8 @@ export function ListElement(props) {
     const [displayColour, setDisplayColour] = useState(props.item.betrag >= 0 ? true : false );
     const [interestRate, setInterestRate] = useState(0);
     const [interestPer, setInterestPer] = useState(0);
+    const [isUpdating, setIsUpdating] = useState(false);
+
     /**
      * Speichert die Anzahl onchange in den State
      * @param e
@@ -55,6 +57,8 @@ export function ListElement(props) {
      */
     const handleClose = () => {
         console.log("notizen: " + notes);
+      if(isUpdating){
+
        const ob = {
            "itId": props.item.itId,
            "todoPunkt": titel,
@@ -66,7 +70,11 @@ export function ListElement(props) {
         props.updatePunkt(props.item.itId, titel, betrag, false, date, notes, interestRate, interestPer);
 
         setDisplayColour(betrag >= 0 ? true : false);
+                setIsUpdating(false);
+        }
+
         setShowM(false);
+
     }
 
     /**
@@ -95,7 +103,10 @@ export function ListElement(props) {
     }, []) */
 
 
-    const handleShow = () => setShowM(true);
+    const handleShow = () => {
+            setShowM(true);
+            setIsUpdating( true);
+    }
     const handleText = (e) => setTitel(e.target.value);
     const handleBetrag = (e) => setBetrag(e.target.value);
     const handleNotes = (e) => setNotes(e.target.value);
