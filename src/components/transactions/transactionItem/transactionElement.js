@@ -25,6 +25,7 @@ export function TransactionElement(props) {
 
 
 
+
     /**
      * Speichert die Anzahl onchange in den State
      * @param e
@@ -51,19 +52,21 @@ export function TransactionElement(props) {
 
     const handleClose = () => {
             console.log("notizen: " + notes);
-           const ob = {
-               "itId": props.item.itId,
-               "todoPunkt": titel,
-               "betrag": betrag,
-               "strich": false,
-               "datum": date,
-               "notizen": notes
-           }
-            props.updateTransaction(props.item.itId, props.item.tId, titel, betrag, date, notes,false);
+           if(showM){
+               const ob = {
+                   "itId": props.item.itId,
+                   "todoPunkt": titel,
+                   "betrag": betrag,
+                   "strich": false,
+                   "datum": date,
+                   "notizen": notes
+               }
+                props.updateTransaction(props.item.itId, props.item.tId, titel, betrag, date, notes,false);
 
-            setDisplayColour(betrag >= 0 ? true : false);
-            setShowM(false);
-        }
+                setDisplayColour(betrag >= 0 ? true : false);
+                setShowM(false);
+            }
+        };
 
     const handleDelete = () => {
         props.deleteTransaction(props.item.itId, props.item.tId);

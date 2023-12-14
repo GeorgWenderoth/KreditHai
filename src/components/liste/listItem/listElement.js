@@ -72,7 +72,6 @@ export function ListElement(props) {
         setDisplayColour(betrag >= 0 ? true : false);
                 setIsUpdating(false);
         }
-
         setShowM(false);
 
     }
@@ -106,7 +105,7 @@ export function ListElement(props) {
     const handleShow = () => {
             setShowM(true);
             setIsUpdating( true);
-    }
+    };
     const handleText = (e) => setTitel(e.target.value);
     const handleBetrag = (e) => setBetrag(e.target.value);
     const handleNotes = (e) => setNotes(e.target.value);
