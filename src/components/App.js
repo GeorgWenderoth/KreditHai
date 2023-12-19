@@ -550,16 +550,31 @@ class App extends React.Component {
         });
     }; */
 
+    // was mit "exploit" das man schulden bezhalen kann befor zinsen angewendet werden?
+    //was damit das man schulden nicht über bezahlen kann? was mit bezal harken oder so, -> im fronten verhindern?
+    // was mit  das paybacktransactionen nur anglegent werden könne dwenn sie valide sind? -> im fronten verhindern?
     updateTransaction(id, tId, title, betrag,datum, notizen, harken){
                              console.log("updateTransaction Test: ", id, tId, title, betrag, datum, notizen,);
                               const punktArray = [...this.state.punkt];
                               const indexItem = this.state.punkt.map(item => item.itId).indexOf(id);
                               console.log("indexItem: ", indexItem);
                               //const updatePunkt =
-                                  let transactions =  punktArray[indexItem].transactions;
-                                  let tIndex = transactions.map( transaction => transaction.tId).indexOf(tId);
+
+
+                              let transactions =  punktArray[indexItem].transactions;
+                              let tIndex = transactions.map( transaction => transaction.tId).indexOf(tId);
                                                                                 console.log("tIndex: ", tIndex);
                                                              console.log("transaction: ", transactions[tIndex]);
+
+                              let cDept = transactions[tIndex].dept;
+                              console.log("cDept: ", cDept);
+                              console.log("betrag: ", betrag);
+                              let newDept = cDept + Number(betrag);
+
+                              if(transactions[tIndex].dept < 0 && newDept <=0 || transactions[tIndex].dept > 0 && newDept >= 0){
+                                     transactions[tIndex].dept = newDept;
+
+
 
                                     let payBackTransactionId = LocalStorageIdService();
                                     let newPayBackTransaction = {
@@ -576,6 +591,7 @@ class App extends React.Component {
 
                                                                 };
 
+
                                     let cPayBackTransactions =   transactions[tIndex].payBackTransactions
                                     if(Array.isArray(cPayBackTransactions)){
                                                   cPayBackTransactions.push(newPayBackTransaction);
@@ -587,30 +603,31 @@ class App extends React.Component {
 
                                     // funktioniert noch nicht ganz.
 
-                                    let cDept = transactions[tIndex].dept;
+                                    /*   let cDept = transactions[tIndex].dept;
                                     console.log("cDept: ", cDept);
                                     console.log("betrag: ", betrag);
                                     let newDept = cDept + Number(betrag);
-                                    if(transactions[tIndex].dept < 0 && newDept <=0){
+                                    if(transactions[tIndex].dept < 0 && newDept <=0 || transactions[tIndex].dept > 0 && newDept >= 0){
                                         transactions[tIndex].dept = newDept;
                                     }
-                                    if(transactions[tIndex].dept > 0 && newDept >= 0){
+                                   /* if(transactions[tIndex].dept > 0 && newDept >= 0){
                                         transactions[tIndex].dept = newDept;
-                                    }
+                                    } */
 
                                     console.log("newDept: ", newDept);
-                                   // transactions[tIndex].dept = newDept;
+                                    // transactions[tIndex].dept = newDept;
                                     console.log("transaction dept after update: ", transactions[tIndex].dept);
 
                                     console.log("updateDate: ", transactions[tIndex].updateDate);
 
 
-                punktArray[indexItem].transactions = transactions;
+                                    punktArray[indexItem].transactions = transactions;
 
 
-                this.setState({punkt: punktArray});
-                // vorsicht ganz unten ist anders, wir testen das einfach mal
-                localStorage.setItem('punkt', JSON.stringify(punktArray));
+                                   this.setState({punkt: punktArray});
+                                    // vorsicht ganz unten ist anders, wir testen das einfach mal
+                                   localStorage.setItem('punkt', JSON.stringify(punktArray));
+                              }
             };
 
     deleteTransaction(id, tId, title, betrag,datum, notizen){
