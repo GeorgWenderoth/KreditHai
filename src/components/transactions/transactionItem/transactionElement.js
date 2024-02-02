@@ -194,5 +194,6 @@ export function TransactionElement(props) {
 
             </Card.Body>
         </Card>
+
     )
 }

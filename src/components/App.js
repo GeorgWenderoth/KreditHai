@@ -25,9 +25,11 @@ class App extends React.Component {
             transactions: [],
             deptOfAllDebtorsCombined: 0,
             isUpdatingDebts: false,
+
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.deleteAllDoneItems = this.deleteAllDoneItems.bind(this);
+        this.handleCloseErrorModal = this.handleCloseErrorModal.bind(this);
        // this.updateInterval = this.updateInterval.bind(this);
     }
 
@@ -524,42 +526,16 @@ class App extends React.Component {
                           } else {
                           console.log("shouldBeUpdated: ", shouldBeUpdated);
                           }
+             };
 
-                          };
-
-
-  /*  updateTransaction(id, tId, title, betrag,datum, notizen){
-                     console.log("updateTransaction Test: ", id, tId, title, betrag, datum, notizen,);
-
-        const updatedPunkt = this.state.punkt.map((item) => {
-                     const updatedItem = { ...item };
-                     const transactions = updatedItem.transactions || [];
-
-
-                    let tIndex = transactions.map( transaction => transaction.tId).indexOf(tId);
-                    console.log("tIndex: ", tIndex);
-
-                     transactions.forEach((transaction) => {
-                        if(transaction.tId === tId){
-                        console.log("transaction found: ", transaction.betrag, transaction.notizen);
-                        console.log("neuer rest schulden: ", Number(transaction.dept + betrag));
-                        transaction.paidBack += Number(betrag);
-                        console.log("transactionpaidback: ", transaction.paidBack)
-                        }
-                     });
-        });
-    }; */
 
     // was mit "exploit" das man schulden bezhalen kann befor zinsen angewendet werden?
-    //was damit das man schulden nicht über bezahlen kann? was mit bezal harken oder so, -> im fronten verhindern?
-    // was mit  das paybacktransactionen nur anglegent werden könne dwenn sie valide sind? -> im fronten verhindern?
+    // was mit bezal harken oder so, -> im fronten verhindern das man es über haupt editieren kann?
     updateTransaction(id, tId, title, betrag,datum, notizen, harken){
                              console.log("updateTransaction Test: ", id, tId, title, betrag, datum, notizen,);
                               const punktArray = [...this.state.punkt];
                               const indexItem = this.state.punkt.map(item => item.itId).indexOf(id);
                               console.log("indexItem: ", indexItem);
-                              //const updatePunkt =
-
 
                               let transactions =  punktArray[indexItem].transactions;
                               let tIndex = transactions.map( transaction => transaction.tId).indexOf(tId);
@@ -571,10 +547,11 @@ class App extends React.Component {
                               console.log("betrag: ", betrag);
                               let newDept = cDept + Number(betrag);
 
-                              if(transactions[tIndex].dept < 0 && newDept <=0 || transactions[tIndex].dept > 0 && newDept >= 0){
-                                     transactions[tIndex].dept = newDept;
+                              // is working like intended, new Dept allways has to reduce Dept and not overpay
+                              if(transactions[tIndex].dept < 0 && newDept <=0 && newDept > transactions[tIndex].dept ||
+                                 transactions[tIndex].dept > 0 && newDept >= 0 && newDept < transactions[tIndex].dept){
 
-
+                                    transactions[tIndex].dept = newDept;
 
                                     let payBackTransactionId = LocalStorageIdService();
                                     let newPayBackTransaction = {
@@ -583,12 +560,9 @@ class App extends React.Component {
                                                                     "payBackToId": tId,
                                                                     "name": title,
                                                                     "betrag": betrag,
-
                                                                     "strich": harken,
                                                                     "date": datum,
                                                                     "notizen": notizen,
-
-
                                                                 };
 
 
@@ -600,19 +574,6 @@ class App extends React.Component {
                                                    };
 
                                     transactions[tIndex].payBackTransactions = cPayBackTransactions;
-
-                                    // funktioniert noch nicht ganz.
-
-                                    /*   let cDept = transactions[tIndex].dept;
-                                    console.log("cDept: ", cDept);
-                                    console.log("betrag: ", betrag);
-                                    let newDept = cDept + Number(betrag);
-                                    if(transactions[tIndex].dept < 0 && newDept <=0 || transactions[tIndex].dept > 0 && newDept >= 0){
-                                        transactions[tIndex].dept = newDept;
-                                    }
-                                   /* if(transactions[tIndex].dept > 0 && newDept >= 0){
-                                        transactions[tIndex].dept = newDept;
-                                    } */
 
                                     console.log("newDept: ", newDept);
                                     // transactions[tIndex].dept = newDept;
@@ -627,6 +588,8 @@ class App extends React.Component {
                                    this.setState({punkt: punktArray});
                                     // vorsicht ganz unten ist anders, wir testen das einfach mal
                                    localStorage.setItem('punkt', JSON.stringify(punktArray));
+                              } else {
+                                this.setState({showM: true});
                               }
             };
 
@@ -776,6 +739,11 @@ class App extends React.Component {
         }
 
 
+        // new for errorModal 01.02.24
+        handleCloseErrorModal(){
+            this.setState({showM: false});
+        }
+
 
 
     render() {
@@ -809,6 +777,21 @@ class App extends React.Component {
                                                updateTransaction={(id, tId, title, betrag,datum, notizen,strich)=> this.updateTransaction(id, tId, title, betrag ,datum, notizen, strich)}
                                                deleteTransaction={(id, tId)=> this.deleteTransaction(id, tId)}
                                 />
+
+                                //causing error, coz possible loop, // ich glaube ich muss das in nem anderen component machen
+                                <Modal show={this.state.showM} onHide={this.handleCloseErrorModal} >
+                                                                       <Modal.Header className="bg-danger" closeButton>
+                                                                           <Modal.Title>
+                                                                               Falsche Eingabe:
+                                                                           </Modal.Title>
+                                                                       </Modal.Header>
+                                                                       <Modal.Body className="bg-danger">
+                                                                            Schulden können nur abezahlt, aber nicht weiter aufgebaut werden,
+                                                                            Schulden könne nicht überbezahlt werden.
+                                                                       </Modal.Body>
+                                                                       <Modal.Footer className="bg-danger">
+                                                                       </Modal.Footer>
+                                </Modal>
             </div>
         )
     }
