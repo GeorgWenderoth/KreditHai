@@ -162,7 +162,7 @@ class App extends React.Component {
     }
 
 
-    addTransactionInState(id, title, betrag, harken, datum, notizen, interestRate, interestPer) {
+    addTransactionInState(id, title, betrag, harken, datum, notizen, interestRate, interestPer, freePayBackTime) {
            // console.log("parameter: " + id + " " + title + " " + datum + " " + notizen)
             console.log("punkt " + this.state.punkt[0]);
             let punkt = [...this.state.punkt];
@@ -193,6 +193,7 @@ class App extends React.Component {
                                                    "paidBack": 0,
                                                    "payBackTransactions": [],
                                                    "updateDate": datum,
+                                                   "freePayBackTime": freePayBackTime,
                                                };
               // cTransactions.push(newTransaction);
                if(Array.isArray(cTransactions)){
@@ -256,9 +257,6 @@ class App extends React.Component {
                                                          transactions.forEach((transaction) => {
 
 
-
-
-
                                                                // setting up dates and times
                                                                let borrowDate = new Date(transaction.date);
                                                                 let transactionDept;
@@ -279,9 +277,14 @@ class App extends React.Component {
                                                                const timePassedMS = currentDate - borrowDate;
                                                                passedDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
 
+                                                                // hier frist tage einfügen, bz diese von passedDays abziehen und nur weiter machen wenn die über null sind
 
+                                                                let freePayBackTime = transaction.freePayBackTime;
 
-                                                               payDays = passedDays / transaction.interestPer;
+                                                                if(freePayBackTime != null) {
+                                                                }
+
+                                                               payDays = (passedDays - freePayBackTime) / transaction.interestPer;
 
 
 
@@ -549,7 +552,7 @@ class App extends React.Component {
 
                               // is working like intended, new Dept allways has to reduce Dept and not overpay
                               if(transactions[tIndex].dept < 0 && newDept <=0 && newDept > transactions[tIndex].dept ||
-                                 transactions[tIndex].dept > 0 && newDept >= 0 && newDept < transactions[tIndex].dept){
+                                 transactions[tIndex].dept > 0 && newDept >= 0 && newDept < transactions[tIndex].dept) {
 
                                     transactions[tIndex].dept = newDept;
 
@@ -757,8 +760,8 @@ class App extends React.Component {
                 <ToDoHeader handleSubmit={(value) => this.handleSubmit(value)}/>
                 <BereichUeberschrift ueberschrift={"Zu erledigende To-dos"}/>
                 <ContainerListe itemList={this.state.punkt}
-                                updatePunkt={(id, title, betrag, harken, datum, notizen, interestRate, interestPer) =>
-                                    this.addTransactionInState(id, title, betrag, harken, datum, notizen, interestRate, interestPer)}
+                                updatePunkt={(id, title, betrag, harken, datum, notizen, interestRate, interestPer, freePayBackTime) =>
+                                    this.addTransactionInState(id, title, betrag, harken, datum, notizen, interestRate, interestPer, freePayBackTime)}
                                 updateDoneOrNot={(id, harken) => this.auswahlTransactions(id, harken)}
                                 deletePunkt ={(id)=> this.deleateSpecificItem(id)}
                                 />
@@ -772,11 +775,11 @@ class App extends React.Component {
                         löschen</Button>
                 </div>
 
-                                <TransactionListe
-                                               itemList={this.state.transactions}
-                                               updateTransaction={(id, tId, title, betrag,datum, notizen,strich)=> this.updateTransaction(id, tId, title, betrag ,datum, notizen, strich)}
-                                               deleteTransaction={(id, tId)=> this.deleteTransaction(id, tId)}
-                                />
+                <TransactionListe
+                                 itemList={this.state.transactions}
+                                 updateTransaction={(id, tId, title, betrag,datum, notizen,strich)=> this.updateTransaction(id, tId, title, betrag ,datum, notizen, strich)}
+                                 deleteTransaction={(id, tId)=> this.deleteTransaction(id, tId)}
+                />
 
                                 //causing error, coz possible loop, // ich glaube ich muss das in nem anderen component machen
                                 <Modal show={this.state.showM} onHide={this.handleCloseErrorModal} >

@@ -28,6 +28,8 @@ export function ListElement(props) {
     const [interestPer, setInterestPer] = useState(0);
     const [isUpdating, setIsUpdating] = useState(false);
 
+    const [interestFreePayBackTime, setInterestFreePayBackTime] = useState(0);
+
     /**
      * Speichert die Anzahl onchange in den State
      * @param e
@@ -67,7 +69,7 @@ export function ListElement(props) {
            "datum": date,
            "notizen": notes
        }
-        props.updatePunkt(props.item.itId, titel, betrag, false, date, notes, interestRate, interestPer);
+        props.updatePunkt(props.item.itId, titel, betrag, false, date, notes, interestRate, interestPer, interestFreePayBackTime);
 
         setDisplayColour(betrag >= 0 ? true : false);
                 setIsUpdating(false);
@@ -111,6 +113,7 @@ export function ListElement(props) {
     const handleNotes = (e) => setNotes(e.target.value);
     const handleInterestRate = (e) => setInterestRate(e.target.value);
     const handleInterestPer = (e) => setInterestPer(e.target.value);
+    const handleInterestFreePayBackTime = (e) => setInterestFreePayBackTime(e.target.value);
 
     return (
         
@@ -150,6 +153,13 @@ export function ListElement(props) {
                                            <input className="form-control" type="date" value={date}
                                                   onChange={(e) => handleDate(e)}/>
                                        </div>
+                                   </div>
+                                   <div className="mb-3 row">
+                                        <label className=" col-3 col-form-label">Zinsfreie Rückzahlfrist: </label>
+                                        <div className="col-9">
+                                            <input className="form-control" type="number" value={interestFreePayBackTime}
+                                                   onChange={handleInterestFreePayBackTime}/>
+                                        </div>
                                    </div>
                                    <div className="mb-3 row">
                                          <label className="col-3 col-form-label">Zins: </label>
