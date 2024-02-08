@@ -28,7 +28,7 @@ export function ListElement(props) {
     const [interestPer, setInterestPer] = useState(0);
     const [isUpdating, setIsUpdating] = useState(false);
 
-    const [interestFreePayBackTime, setInterestFreePayBackTime] = useState(0);
+    const [interestFreePayBackTime, setInterestFreePayBackTime] = useState(datum);
 
     /**
      * Speichert die Anzahl onchange in den State
@@ -157,8 +157,8 @@ export function ListElement(props) {
                                    <div className="mb-3 row">
                                         <label className=" col-3 col-form-label">Zinsfreie Rückzahlfrist: </label>
                                         <div className="col-9">
-                                            <input className="form-control" type="number" value={interestFreePayBackTime}
-                                                   onChange={handleInterestFreePayBackTime}/>
+                                            <input className="form-control" type="date" value={interestFreePayBackTime}
+                                                   onChange={(e) => handleInterestFreePayBackTime(e)}/>
                                         </div>
                                    </div>
                                    <div className="mb-3 row">

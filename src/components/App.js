@@ -256,75 +256,72 @@ class App extends React.Component {
                                                          // Going thru the transactions
                                                          transactions.forEach((transaction) => {
 
-                                                                let freePayBackTime = transaction.freePayBackTime;
                                                                // setting up dates and times
                                                                let borrowDate = new Date(transaction.date);
+
                                                                 let transactionDept;
-                                                                // und nicht zero?
-                                                                if(!! freePayBackTime ){
-                                                                    const timePassedMS = currentDate - borrowDate;
-                                                                    passedDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
-                                                                    //größer glei oder nur größer?
-                                                                    if ( passedDays <= freePayBackTime ){
-                                                                        // es ist noch innerhalb der bezahl frist folgich brucht man nicht weiter machen. keine erhöhung der zinsen findet statt.
-                                                                        // Sollte man uppdated Day an passen?
-                                                                        // man kann das bestimmer noch mehr optimieren, ist es das wert? währe es mit freePayBackTime als Date datentyp besser?
-                                                                    } else {
-                                                                    // die Frist ist um folgich kann normal weiter gemacht werden.
-                                                                    //wenn da kann auch updatedDate benutz werden,
-                                                                    //allerding ist das net wirglich gut optimiert und efficzient, weil ih ja die selbe bedingung brauche für den fall das FreePayBack Time NULL ist.
-                                                                    }
-                                                                }
 
 
-                                                                //Das funktioniert? was wenn das null ist?
-                                                                borrowDate = new Date(transaction.updateDate);
+
                                                                       transactionDept = Number(transaction.dept);
+                                                                // letztes update Datum
+                                                                let updateDate = new Date(transaction.updateDate);
+                                                                    //!!!VOR TESTING 08.02.24 IF updateDate is the Poblem
+                                                                  //  updateDate = borrowDate; /// JA ES IST DAS POROBLEM! MM net wirklcih, ohne gehts auch net
 
+                                                                // Datum bis zu dem man ohne interest/ Zinsen zurückzahen kann
+                                                                let freePayBackDate = new Date(transaction.freePayBackTime);
+
+                                                                // Das hier warscheinlich am besen für alle
                                                                 let lastInterestDate;
-                                                               /*try {
-                                                               const d = new Date(transaction.updateDate);
-                                                               const dISO = d.toISOString().split('T')[0];
-                                                                borrowDate = new Date(transaction.updateDate);
-                                                                transactionDept = Number(transaction.dept);
 
-                                                               } catch (error) {
-                                                                 transactionDept = Number(transaction.betrag);
-                                                               }; */
-
-                                                               const timePassedMS = currentDate - borrowDate;
-                                                               passedDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
-
-                                                                // hier frist tage einfügen, bz diese von passedDays abziehen und nur weiter machen wenn die über null sind
-
-                                                             //   let freePayBackTime = transaction.freePayBackTime;
-
-                                                                if(freePayBackTime != null) {
-                                                                    console.log("NOT NULL");
+                                                                //wenn, istt das so richtig, müsste es nicht >= sein
+                                                                if( updateDate > borrowDate) {
+                                                                //wenn nicht null und größer
+                                                                    lastInterestDate = updateDate;
+                                                                }else {
+                                                                //wenn null oder nicht kleiner
+                                                                    lastInterestDate = borrowDate;
+                                                                    updateDate = borrowDate;
                                                                 }
 
-                                                                // passed days dar nicht im minus sein,, geht net weil borrow dateupdated Date ist und immer angepasst wird, heist, der später zeitraum wird immer angepasst.
-                                                                if(!! freePayBackTime ){
-                                                                    payDays = (passedDays - freePayBackTime) / transaction.interestPer;
-                                                                    //ist der Hier wirklich notwendig?
-                                                                    if( payDays < 0 ){
-                                                                    payDays = 0;
-                                                                    }
+                                                                //SicherStellen Das alle Daten stimmen , nicht null sind, und sie korrgieren wenn sie es sind
+                                                                if(freePayBackDate === null || freePayBackDate < borrowDate ){
+                                                                    freePayBackDate = borrowDate;
+                                                                };
+
+                                                                if( updateDate > borrowDate) {
+                                                                   //wenn nicht null und größer
+                                                                    lastInterestDate = updateDate;
+
+                                                                }else {
+                                                                     //wenn null oder nicht kleiner
+                                                                    lastInterestDate = borrowDate;
+                                                                    updateDate = borrowDate;
+                                                                }
+
+
+
+                                                                if(currentDate <= freePayBackDate){
+                                                                    //wenn innerhalt payBckTime
+                                                                    lastInterestDate = currentDate;
                                                                 } else {
-                                                                    payDays = passedDays / transaction.interestPer;
-                                                                }
-                                                               // payDays = (passedDays - freePayBackTime) / transaction.interestPer;
-                                                               // && passedDays > freePayBackTime
+                                                                    //wenn auserhalb
+                                                                   // lastInterestDate = freePayBackTime;
 
-                                                               //payDays = (passedDays - freePayBackTime) / transaction.interestPer;
+                                                                    // wenn aber ubdated größer ist
+                                                                    if(updateDate < freePayBackDate) {
+                                                                      lastInterestDate = freePayBackDate;
+                                                                    };
 
 
+                                                                }; // Bis hier sollt eigendlich funktionieren und alle fälle lösen
 
-                                                              // const payBackD = transaction.payBackTransactions[0];
-                                                               //console.log("payBackD: ", payBackD);
+                                                                  const timePassedMS = currentDate - lastInterestDate;
 
-                                                               // hier muss das bereits mit dem baidBack betrag verrechnet werden! was wenn es drüber geht
-                                                              // let transactionDept= Number(transaction.betrag);
+                                                                  passedDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
+                                                                        console.log("passedDays: ", passedDays);
+                                                                  payDays = passedDays  / transaction.interestPer;
 
                                                                console.log(updatedItem.notizen, " days passed: ", payDays);
                                                                //console.log("transactions: ", transaction);
@@ -373,8 +370,12 @@ class App extends React.Component {
                                                                             //(braucht es diese zeile?)
                                                                     transaction.dept = transactionDept;
                                                                     //new
+                                                                        console.log("Kein Update für: ", transaction.notizen);
+                                                                        console.log("updateDate before update: ", transaction.updateDate);
+                                                                        // das Datum nicht updaten um bug zu beheben?
                                                                     transaction.updateDate = currentDate;
                                                                     combinedTransactionsDept += transactionDept;
+                                                                    console.log("Kein Update für: ", transaction.notizen);
                                                                }
 
                                                                 // add the updated transaction to the
