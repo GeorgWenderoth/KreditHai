@@ -254,10 +254,17 @@ class App extends React.Component {
                                                          //test
                                                                 let addingAllOriginalTransactionLendigs = 0;
                                                          // Going thru the transactions
+                                                            //Test if it acctucally goes trhu all
+                                                            let zähler = 0;
+                                                            let elseZähler = 0;
                                                          transactions.forEach((transaction) => {
-
+                                                                zähler++;
+                                                                console.log("zähler: ", zähler, " ", transaction.name, " ", transaction.notizen);
                                                                // setting up dates and times
                                                                let borrowDate = new Date(transaction.date);
+                                                                   // console.log("borrowDate.getDate(): ", borrowDate.getDate());
+                                                               //only Day
+                                                               borrowDate= new Date(borrowDate.getFullYear(), borrowDate.getMonth(), borrowDate.getDate());
 
                                                                 let transactionDept;
 
@@ -266,12 +273,14 @@ class App extends React.Component {
                                                                       transactionDept = Number(transaction.dept);
                                                                 // letztes update Datum
                                                                 let updateDate = new Date(transaction.updateDate);
+                                                                    updateDate = new Date( updateDate.getFullYear(), updateDate.getMonth(), updateDate.getDate());
+                                                                    console.log("updateDate: ", updateDate, " ", transaction.notizen);
                                                                     //!!!VOR TESTING 08.02.24 IF updateDate is the Poblem
                                                                   //  updateDate = borrowDate; /// JA ES IST DAS POROBLEM! MM net wirklcih, ohne gehts auch net
 
                                                                 // Datum bis zu dem man ohne interest/ Zinsen zurückzahen kann
                                                                 let freePayBackDate = new Date(transaction.freePayBackTime);
-
+                                                                    freePayBackDate = new Date(freePayBackDate.getFullYear(), freePayBackDate.getMonth(), freePayBackDate.getDate());
                                                                 // Das hier warscheinlich am besen für alle
                                                                 let lastInterestDate;
 
@@ -316,9 +325,12 @@ class App extends React.Component {
 
 
                                                                 }; // Bis hier sollt eigendlich funktionieren und alle fälle lösen
-
+                                                                    console.log("lastInterestDate: ", lastInterestDate, " ", transaction.notizen);
                                                                   const timePassedMS = currentDate - lastInterestDate;
-
+                                                                    console.log("timePasseMS: ", timePassedMS)
+                                                                    //Problem ist hier weil kein ganzer tag rauskommt wenn es keine 24 Stunden sind.
+                                                                    //Soloution math.ceil rundet auf statt ab, problem mit dieser lösung, er macht immer weiter.
+                                                                        //Richtige lösung, Datum auf tage begrenzen (ohne stunden)
                                                                   passedDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
                                                                         console.log("passedDays: ", passedDays);
                                                                   payDays = passedDays  / transaction.interestPer;
@@ -347,7 +359,8 @@ class App extends React.Component {
 
                                                                     // calculating the dept with interesst
                                                                     // calculating calculatedDept
-                                                                    for (let i = 0; i <= payDays; i++) {
+                                                                        //!!! i = 1 wegen  <=, dardurch geht die loop sonst einmal mehr durch
+                                                                    for (let i = 1; i <= payDays; i++) {
                                                                         const interest = calculatedDept * (transaction.interest / 100);
                                                                             console.log("interest: ", interest);
                                                                             console.log("curentDept(loop) before: ", calculatedDept);
@@ -372,10 +385,12 @@ class App extends React.Component {
                                                                     //new
                                                                         console.log("Kein Update für: ", transaction.notizen);
                                                                         console.log("updateDate before update: ", transaction.updateDate);
-                                                                        // das Datum nicht updaten um bug zu beheben?
-                                                                    transaction.updateDate = currentDate;
+                                                                    // das Datum nicht updaten um bug zu beheben? Ausprobiert 08.02.24 TEST!!!
+                                                                    //transaction.updateDate = currentDate; //Auskommentiert wegen TEST siehe oben.
                                                                     combinedTransactionsDept += transactionDept;
                                                                     console.log("Kein Update für: ", transaction.notizen);
+                                                                    elseZähler++;
+                                                                    console.log("elseZähler: ", elseZähler);
                                                                }
 
                                                                 // add the updated transaction to the
@@ -412,7 +427,7 @@ class App extends React.Component {
              console.log("statecalled:", updatedPunkt)
              //updatePunkt.betrag = combinedDept;
               this.setState({ punkt: updatedPunkt });
-
+              localStorage.setItem('punkt', JSON.stringify(updatedPunkt));
              } else {
              console.log("shouldBeUpdated: ", shouldBeUpdated);
              }
