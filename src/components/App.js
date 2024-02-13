@@ -185,7 +185,7 @@ class App extends React.Component {
                                                    "name": title,
                                                    "betrag": betrag,
                                                    "dept": Number(betrag),
-                                                   "strich": harken,
+                                                   "strich": false,
                                                    "date": datum,
                                                    "notizen": notizen,
                                                    "interest": interestRate,
@@ -450,6 +450,9 @@ class App extends React.Component {
                                                                 };
 
 
+
+
+
                                     let cPayBackTransactions =   transactions[tIndex].payBackTransactions
                                     if(Array.isArray(cPayBackTransactions)){
                                                   cPayBackTransactions.push(newPayBackTransaction);
@@ -458,6 +461,11 @@ class App extends React.Component {
                                                    };
 
                                     transactions[tIndex].payBackTransactions = cPayBackTransactions;
+
+                                    //13.02.24 if paid of
+                                    if(transactions[tIndex].dept === 0){
+                                        transactions[tIndex].strich = true;
+                                    };
 
                                     console.log("newDept: ", newDept);
                                     // transactions[tIndex].dept = newDept;

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import {Col, Row, Card, Button, Modal} from "react-bootstrap";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faPen} from '@fortawesome/free-solid-svg-icons';
+import {faPen, faCheck} from '@fortawesome/free-solid-svg-icons';
 import "../../../Styles.scss";
 import "../../App.scss";
 
@@ -20,6 +20,7 @@ export function TransactionElement(props) {
     const [betrag, setBetrag] = useState(0);
     const [notes, setNotes] = useState(props.item.notizen === undefined ? 'notizen' : props.item.notizen);
     const [displayButton, setDisplayButton] = useState(props.item.strich ? "none" : "visible");
+    const [displayTick, setDisplayTick] = useState(props.item.strich ? "visible": "none");
     const [displayColour, setDisplayColour] = useState(props.item.betrag >= 0 ? true : false );
     const [dept, setDept] = useState(props.item.betrag);
 
@@ -135,7 +136,14 @@ export function TransactionElement(props) {
 
             <div className="buttonHull">
                 <Button style={{display: displayButton}} onClick={handleShow}
-                        className="bearbeitungsButton"><FontAwesomeIcon className="form-icon" icon={faPen}/></Button>
+                        className="bearbeitungsButton"><FontAwesomeIcon className="form-icon" icon={faPen}/>
+                </Button>
+                <Button style={{display: displayTick}}
+                                        className="abbezahltHarken"> <FontAwesomeIcon  className="form-icon" icon={faCheck} size="lg"/>
+                                </Button>
+
+
+
             </div>
 
             <Card.Body >
@@ -144,6 +152,7 @@ export function TransactionElement(props) {
                     <p className="punkt">{props.item.todoPunkt}</p>
                     <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } > {Number(props.item.dept).toFixed(2)}</p>
                     <p className="transaktionWhite">{props.item.notizen} </p>
+                    <p className="transaktionWhite">{props.item.strich} </p>
                     <p className="transaktionWhite">{props.item.date}</p>
                     <p className="transaktionWhite">{props.item.interest} %</p>
                     <p className="transaktionWhite">Fällig alle: {props.item.interestPer} Tage</p>

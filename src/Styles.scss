@@ -123,6 +123,7 @@
         .buttonHull {
           display: grid;
           .bearbeitungsButton {
+
             background-color: transparent;
             border-color: transparent;
             justify-self: end;
@@ -132,6 +133,8 @@
           }
         }
       }
+
+
 
         .transactionCardStyle {
               padding: 0;
@@ -241,7 +244,21 @@
                   top: 0px;
                   right: 7px;
                 }
+
+
+                        // icon gren tick
+                .abbezahltHarken {
+                    color: green;
+                    background-color: transparent;
+                                               border-color: transparent;
+                                               justify-self: end;
+                                               position: absolute;
+                                               top: 0px;
+                                               right: 7px;
+                }
+
               }
+
             }
 
       .cardColourGrey {
