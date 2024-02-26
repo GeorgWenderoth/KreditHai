@@ -429,13 +429,35 @@ class App extends React.Component {
                               let cDept = transactions[tIndex].dept;
                               console.log("cDept: ", cDept);
                               console.log("betrag: ", betrag);
-                              let newDept = cDept + Number(betrag);
+                              //mit toFixed Runden damit ein gerundetes erebnis bezahlt werden kann.
+                                    // einheitlich runden mit math,
+                             // let cDeptRounded = Math.round(cDept); //.toFixed(2);
+                              let oldDeptRounded =  Number(cDept.toFixed(2));///Math.round(cDept);
+                                console.log("oldDeptRounded: ", oldDeptRounded);
+                              let newDept = oldDeptRounded + Number(betrag);
+                              console.log("newDepth: ", newDept);
+                              let newDeptRounded = Number(newDept.toFixed(2));//Math.round(newDept);
+                             // let oldDeptRounded = transactions[tIndex].dept.toFixed(2);
 
-                              // is working like intended, new Dept allways has to reduce Dept and not overpay
-                              if(transactions[tIndex].dept < 0 && newDept <=0 && newDept > transactions[tIndex].dept ||
-                                 transactions[tIndex].dept > 0 && newDept >= 0 && newDept < transactions[tIndex].dept) {
+                              console.log("OldDept Rounded: ", oldDeptRounded);
+                              console.log("new Dept rounded: ", newDeptRounded);
 
-                                    transactions[tIndex].dept = newDept;
+                              // is working like intended, new Dept allways has to reduce Dept and not overpay // 0.00 wegen rundung auf zwei komma stellen, keine ahnung ob man es braucht fixed den bug jedenfalls net.
+                              if(oldDeptRounded < 0.00 && newDept <= 0.00 && newDept > oldDeptRounded ||
+                                 oldDeptRounded > 0.00 && newDept >= 0.00 && newDept < oldDeptRounded) {
+
+                                    //Zusammen mit harken (unten) combinieren / optimieren
+                                     // hä es geh nicht ich checke es nicht.
+                                    if(newDeptRounded === 0.00){
+                                        transactions[tIndex].dept = newDeptRounded;
+                                        transactions[tIndex].strich = true;
+                                            console.log("newDeptRounded === 0.00)");
+                                    } else if (newDeptRounded === 0) {
+                                        transactions[tIndex].dept = newDept;
+                                        transactions[tIndex].strich = true;
+                                            console.log("newDeptRounded === 0)");
+                                    };
+
 
                                     let payBackTransactionId = LocalStorageIdService();
                                     let newPayBackTransaction = {
@@ -463,9 +485,9 @@ class App extends React.Component {
                                     transactions[tIndex].payBackTransactions = cPayBackTransactions;
 
                                     //13.02.24 if paid of
-                                    if(transactions[tIndex].dept === 0){
+                                    /*if(transactions[tIndex].dept === 0.00){
                                         transactions[tIndex].strich = true;
-                                    };
+                                    }; */
 
                                     console.log("newDept: ", newDept);
                                     // transactions[tIndex].dept = newDept;
@@ -482,6 +504,7 @@ class App extends React.Component {
                                    localStorage.setItem('punkt', JSON.stringify(punktArray));
                               } else {
                                 this.setState({showM: true});
+                                console.log("dept: ", )
                               }
             };
 

@@ -69,6 +69,11 @@ export function TransactionElement(props) {
             }
         };
 
+    const handlePayAllBack = () => {
+       // setBetrag(props.item.dept * -1);
+        setBetrag((props.item.dept * -1).toFixed(2));
+    }
+
     const handleDelete = () => {
         props.deleteTransaction(props.item.itId, props.item.tId);
         setShowM(false);
@@ -194,6 +199,7 @@ export function TransactionElement(props) {
                                </div>
                            </Modal.Body>
                            <Modal.Footer>
+                           <Button variant="success" size="sm" onClick={handlePayAllBack}> Alles abbezahle</Button>
                            <Button variant="danger" size="sm"  onClick={handleDelete}>Löschen</Button>
                            <Button variant="secondary" size="sm"
                                                  onClick={handleCloseWithoutSaving}>Abbrechen</Button>
