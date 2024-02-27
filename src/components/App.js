@@ -7,6 +7,7 @@ import {ContainerListe} from "./liste/containerListe";
 import {LocalStorageIdService} from "../utils/localStorageIdService";
 import {LocalStorageCalls} from "../utils/localStorageCalls";
 import {TransactionListe} from "./transactions/transactionListe";
+import {PayBackTransactionListe} from "./payBackTransactions/payBackTransactionListe";
 
 /**
  * Main Component
@@ -23,6 +24,7 @@ class App extends React.Component {
             amount: '',
             showM: false,
             transactions: [],
+            payBackTransactions: [],
             deptOfAllDebtorsCombined: 0,
             isUpdatingDebts: false,
 
@@ -415,6 +417,7 @@ class App extends React.Component {
 
     // was mit "exploit" das man schulden bezhalen kann befor zinsen angewendet werden?
     // was mit bezal harken oder so, -> im fronten verhindern das man es über haupt editieren kann?
+    //payBack
     updateTransaction(id, tId, title, betrag,datum, notizen, harken){
                              console.log("updateTransaction Test: ", id, tId, title, betrag, datum, notizen,);
                               const punktArray = [...this.state.punkt];
@@ -610,6 +613,7 @@ class App extends React.Component {
         this.setState({punkt: punkt, punktErledigt: punktErledigt});
     }
 
+    //Könnte es hier probleme geben wegen punkterledigt und harken? was passiert wenn harken true ist?
     auswahlTransactions(id, harken) {
             let punkt = [...this.state.punkt];
             let punktErledigt = [...this.state.punktErledigt];
@@ -626,6 +630,17 @@ class App extends React.Component {
 
                     this.setState({transactions: speicher})
 
+    }
+
+    auswahlPayBackTransactions(id,tId,) {
+                let punkt = [...this.state.punkt];
+        let indexItem = punkt.map(a => a.itId).indexOf(id);
+        let transactions = punkt[indexItem].transactions;
+                                                //? welche id
+        let indexTransaction = transactions.map( a => a.tId).indexOf(tId);
+        let payBackTransactions = transactions[indexTransaction].payBackTransactions;
+
+        this.setState({payBackTransactions: payBackTransactions});
     }
 
     /**
@@ -674,7 +689,7 @@ class App extends React.Component {
                 <ContainerListe itemList={this.state.punkt}
                                 updatePunkt={(id, title, betrag, harken, datum, notizen, interestRate, interestPer, freePayBackTime) =>
                                     this.addTransactionInState(id, title, betrag, harken, datum, notizen, interestRate, interestPer, freePayBackTime)}
-                                updateDoneOrNot={(id, harken) => this.auswahlTransactions(id, harken)}
+                                auswahlTransactions={(id, harken) => this.auswahlTransactions(id, harken)}
                                 deletePunkt ={(id)=> this.deleateSpecificItem(id)}
                                 />
                 <BereichUeberschrift ueberschrift={"Transaktionen"}/>
@@ -690,8 +705,12 @@ class App extends React.Component {
                 <TransactionListe
                                  itemList={this.state.transactions}
                                  updateTransaction={(id, tId, title, betrag,datum, notizen,strich)=> this.updateTransaction(id, tId, title, betrag ,datum, notizen, strich)}
+                                 auswahlPayBackTransactions={(id, tId) => this.auswahlPayBackTransactions(id,tId)}
                                  deleteTransaction={(id, tId)=> this.deleteTransaction(id, tId)}
                 />
+
+                <PayBackTransactionListe itemList={this.state.payBackTransactions}/>
+
 
                                 //causing error, coz possible loop, // ich glaube ich muss das in nem anderen component machen
                                 <Modal show={this.state.showM} onHide={this.handleCloseErrorModal} >

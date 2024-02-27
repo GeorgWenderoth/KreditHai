@@ -1,4 +1,4 @@
-import {TransactionElement} from "./transactionItem/transactionElement"
+import {PayBackTransactionElement} from "./payBackTransactionItem/payBackTransactionElement"
 import {Container} from "react-bootstrap";
 import React from "react";
 import "../../Styles.scss";
@@ -10,8 +10,8 @@ import {BereichUeberschrift} from "./../ueberschrift/bereichUeberschrift";
  * @returns {JSX.Element}
  * @constructor
  */
-export function TransactionListe (props) {
-    console.log("ContainerListe: ", props.itemList);
+export function PayBackTransactionListe (props) {
+    //console.log("PayBackTransactionListe: ", props.itemList);
         let s = props.itemList;
         if(s.lenght > 0){
         console.log("transactionlist: ", s);
@@ -25,10 +25,9 @@ export function TransactionListe (props) {
              <BereichUeberschrift ueberschrift={schuldnerName}/>
             <div className="row row-cols-1 row-cols-md-3 row-cols-lg-6 g-2 g-lg-3 reihe d-flex justify-content-evenly">
 
-                    {props.itemList.map((item) => <div className="col"><TransactionElement item={item} id={item.itId}
-                                                                 updateTransaction={props.updateTransaction}
-                                                                 deleteTransaction={props.deleteTransaction}
-                                                                 auswahlPayBackTransactions={props.auswahlPayBackTransactions}   /> </div>) }
+                    {props.itemList.map((item) => <div className="col"><PayBackTransactionElement item={item} id={item.itId}
+
+                                                                 /> </div>) }
 
             </div>
         </Container>

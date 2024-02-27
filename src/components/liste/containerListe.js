@@ -18,7 +18,7 @@ export function ContainerListe (props) {
                 
                     {props.itemList.map((item) => <div className="col"><ListElement item={item} id={item.itId}
                                                                  updatePunkt={props.updatePunkt}
-                                                                 updateDoneOrNot={props.updateDoneOrNot}
+                                                                 auswahlTransactions={props.auswahlTransactions}
                                                                  deletePunkt ={props.deletePunkt}
                                                                  /> </div>) }
                 

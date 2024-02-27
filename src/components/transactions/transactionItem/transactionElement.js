@@ -39,7 +39,7 @@ export function TransactionElement(props) {
     /**
      * Setzt im App state über props.updateDone ein Item auf erledigt
      */
-    const todoErledigt = () => {
+    const auswahlPayBackTransactions = () => {
         console.log("card or box klicked: " + props.item.itId);
         const ob = {
             "itId": props.id,
@@ -47,7 +47,7 @@ export function TransactionElement(props) {
             "strich": false,
             "date": "2022-07-11"
         }
-        props.updateDoneOrNot(props.id, props.item.strich);
+        props.auswahlPayBackTransactions(props.id, props.item.tId);
 
     }
 
@@ -151,7 +151,7 @@ export function TransactionElement(props) {
 
             </div>
 
-            <Card.Body >
+            <Card.Body onClick={(e) => auswahlPayBackTransactions()}>
 
                 <div className="punktHull">
                     <p className="punkt">{props.item.todoPunkt}</p>

@@ -42,7 +42,7 @@ export function ListElement(props) {
     /**
      * Setzt im App state über props.updateDone ein Item auf erledigt
      */
-    const todoErledigt = () => {
+    const auswahlTransactions = () => {
         console.log("card or box klicked: " + props.item.itId);
         const ob = {
             "itId": props.id,
@@ -50,7 +50,7 @@ export function ListElement(props) {
             "strich": false,
             "date": "2022-07-11"
         }
-        props.updateDoneOrNot(props.id, props.item.strich);
+        props.auswahlTransactions(props.id, props.item.strich);
 
     }
 
@@ -183,7 +183,7 @@ export function ListElement(props) {
                            </Modal.Footer>
                        </Modal>
 
-            <Card.Body onClick={(e) => todoErledigt()}>
+            <Card.Body onClick={(e) => auswahlTransactions()}>
                
                 <div className="punktHull">
                     <p className="punkt">{props.item.todoPunkt}</p>
