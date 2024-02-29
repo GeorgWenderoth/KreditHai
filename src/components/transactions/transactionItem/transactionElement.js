@@ -16,9 +16,11 @@ export function TransactionElement(props) {
 
     const [date, setDate] = useState(props.item.date);
     const [showM, setShowM] = useState(false);
-    const [titel, setTitel] = useState(props.item.todoPunkt);
+    const [titel, setTitel] = useState(props.schuldnerName);
+      //  const [titel, setTitel] = useState(props.item.todoPunkt);
     const [betrag, setBetrag] = useState(0);
     const [notes, setNotes] = useState(props.item.notizen === undefined ? 'notizen' : props.item.notizen);
+    //const [payBackNotes, setPayBackNotes] = useState(props.item.notizen === undefined ? 'notizen' : props.item.notizen);
     const [displayButton, setDisplayButton] = useState(props.item.strich ? "none" : "visible");
     const [displayTick, setDisplayTick] = useState(props.item.strich ? "visible": "none");
     const [displayColour, setDisplayColour] = useState(props.item.betrag >= 0 ? true : false );
@@ -50,19 +52,19 @@ export function TransactionElement(props) {
         props.auswahlPayBackTransactions(props.id, props.item.tId);
 
     }
-
+    // was für todopunkt da muss tile rein
     const handleClose = () => {
             console.log("notizen: " + notes);
            if(showM){
                const ob = {
                    "itId": props.item.itId,
-                   "todoPunkt": titel,
+                   "title": props.item.notizen, //"todoPunkt": titel,
                    "betrag": betrag,
                    "strich": false,
                    "datum": date,
-                   "notizen": notes
-               }
-                props.updateTransaction(props.item.itId, props.item.tId, titel, betrag, date, notes,false);
+                   "notizen": notes,
+               }                                                        //notizen statt titel, weil das ja der name der schulden ist
+                props.updateTransaction(props.item.itId, props.item.tId, props.schuldnerName, props.item.notizen, betrag, date, notes,false);
 
                 setDisplayColour(betrag >= 0 ? true : false);
                 setShowM(false);
@@ -154,7 +156,7 @@ export function TransactionElement(props) {
             <Card.Body onClick={(e) => auswahlPayBackTransactions()}>
 
                 <div className="punktHull">
-                    <p className="punkt">{props.item.todoPunkt}</p>
+                    <p className="punkt">{props.schuldnerName}</p>
                     <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } > {Number(props.item.dept).toFixed(2)}</p>
                     <p className="transaktionWhite">{props.item.notizen} </p>
                     <p className="transaktionWhite">{props.item.strich} </p>

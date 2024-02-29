@@ -13,11 +13,16 @@ import {BereichUeberschrift} from "./../ueberschrift/bereichUeberschrift";
 export function PayBackTransactionListe (props) {
     //console.log("PayBackTransactionListe: ", props.itemList);
         let s = props.itemList;
+        if(s == null) {
+        s = [];
+        };
         if(s.lenght > 0){
         console.log("transactionlist: ", s);
         }
     const test = "name";
-        const schuldnerName = props.itemList.length > 0 ? props.itemList[0].name : '';// this.state.transactions > 0 ? this.state.transactions[0].name : '';
+        //const schuldnerName = props.itemList.length > 0 ? props.itemList[0].name : '';// this.state.transactions > 0 ? this.state.transactions[0].name : '';
+        const schuldnerName = s.length > 0 ? s[0].name : '';// this.state.transactions > 0 ? this.state.transactions[0].name : '';
+        console.log("name: ", schuldnerName);
 
     return(
         <Container className="container">

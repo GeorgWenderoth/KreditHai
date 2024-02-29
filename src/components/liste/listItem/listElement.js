@@ -19,6 +19,7 @@ export function ListElement(props) {
     const [transactionDate, setTransactionDate] = useState(datum);
     const [showM, setShowM] = useState(false);
     const [titel, setTitel] = useState(props.item.todoPunkt);
+    //const [titel, setTitel] = useState(props.item.name);
     const [betrag, setBetrag] = useState(0);
     const [notes, setNotes] = useState(props.item.notizen === undefined ? 'notizen' : props.item.notizen);
     const [displayButton, setDisplayButton] = useState(props.item.strich ? "none" : "visible");

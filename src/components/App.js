@@ -167,6 +167,7 @@ class App extends React.Component {
     addTransactionInState(id, title, betrag, harken, datum, notizen, interestRate, interestPer, freePayBackTime) {
            // console.log("parameter: " + id + " " + title + " " + datum + " " + notizen)
             console.log("punkt " + this.state.punkt[0]);
+            console.log("title: ", title);
             let punkt = [...this.state.punkt];
             console.log("p", punkt[1]);
             let i = punkt.map(a => a.itId).indexOf(id);
@@ -418,7 +419,7 @@ class App extends React.Component {
     // was mit "exploit" das man schulden bezhalen kann befor zinsen angewendet werden?
     // was mit bezal harken oder so, -> im fronten verhindern das man es über haupt editieren kann?
     //payBack
-    updateTransaction(id, tId, title, betrag,datum, notizen, harken){
+    updateTransaction(id, tId, title, transactionNote, betrag,datum, notizen, harken){
                              console.log("updateTransaction Test: ", id, tId, title, betrag, datum, notizen,);
                               const punktArray = [...this.state.punkt];
                               const indexItem = this.state.punkt.map(item => item.itId).indexOf(id);
@@ -432,6 +433,7 @@ class App extends React.Component {
                               let cDept = transactions[tIndex].dept;
                               console.log("cDept: ", cDept);
                               console.log("betrag: ", betrag);
+                              console.log("title: ", title);
                               //mit toFixed Runden damit ein gerundetes erebnis bezahlt werden kann.
                                     // einheitlich runden mit math,
                              // let cDeptRounded = Math.round(cDept); //.toFixed(2);
@@ -467,11 +469,12 @@ class App extends React.Component {
                                                                     "itId": id,
                                                                     "tId": payBackTransactionId,
                                                                     "payBackToId": tId,
-                                                                    "name": title,
+                                                                    "schuldnerName": title,
+                                                                    "transactionNote": transactionNote,
                                                                     "betrag": betrag,
                                                                     "strich": harken,
                                                                     "date": datum,
-                                                                    "notizen": notizen,
+                                                                    "payBackNote": notizen,
                                                                 };
 
 
@@ -704,7 +707,7 @@ class App extends React.Component {
 
                 <TransactionListe
                                  itemList={this.state.transactions}
-                                 updateTransaction={(id, tId, title, betrag,datum, notizen,strich)=> this.updateTransaction(id, tId, title, betrag ,datum, notizen, strich)}
+                                 updateTransaction={(id, tId, schuldnerName,transactionNote, betrag,datum, payBackNote,strich)=> this.updateTransaction(id, tId, schuldnerName, transactionNote, betrag ,datum, payBackNote, strich)}
                                  auswahlPayBackTransactions={(id, tId) => this.auswahlPayBackTransactions(id,tId)}
                                  deleteTransaction={(id, tId)=> this.deleteTransaction(id, tId)}
                 />

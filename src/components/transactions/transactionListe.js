@@ -25,7 +25,7 @@ export function TransactionListe (props) {
              <BereichUeberschrift ueberschrift={schuldnerName}/>
             <div className="row row-cols-1 row-cols-md-3 row-cols-lg-6 g-2 g-lg-3 reihe d-flex justify-content-evenly">
 
-                    {props.itemList.map((item) => <div className="col"><TransactionElement item={item} id={item.itId}
+                    {props.itemList.map((item) => <div className="col"><TransactionElement item={item} id={item.itId} schuldnerName={schuldnerName}
                                                                  updateTransaction={props.updateTransaction}
                                                                  deleteTransaction={props.deleteTransaction}
                                                                  auswahlPayBackTransactions={props.auswahlPayBackTransactions}   /> </div>) }
