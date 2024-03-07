@@ -14,7 +14,7 @@ export function PayBackTransactionListe (props) {
     //console.log("PayBackTransactionListe: ", props.itemList);
         let s = props.itemList;
         if(s == null) {
-        s = [];
+        s = [{}];
         };
         if(s.lenght > 0){
         console.log("transactionlist: ", s);

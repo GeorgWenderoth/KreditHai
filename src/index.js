@@ -1,14 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
 import './index.scss';
 import App from './components/App';
 //import reportWebVitals from './reportWebVitals';
 
+const router = createBrowserRouter([
+{
+
+    path: '/',
+    element: <App />,
+    errorElement: <div>404 Not Found </div>
+},
+{
+
+}
+
+]);
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
 
+    <RouterProvider router={router}/>
   </React.StrictMode>,
   document.getElementById('root')
 );
