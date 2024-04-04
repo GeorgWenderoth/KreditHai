@@ -52,7 +52,9 @@ export function TransactionElement(props) {
         props.auswahlPayBackTransactions(props.id, props.item.tId);
 
     }
-    // was für todopunkt da muss tile rein
+     /**
+      * Schließt Modal und speichert die änderungen im Localstorage (LocalStorageCalls) und im Frontend State (props.updatePunkt)
+      */
     const handleClose = () => {
             console.log("notizen: " + notes);
            if(showM){
@@ -81,22 +83,7 @@ export function TransactionElement(props) {
         setShowM(false);
     }
 
-    /**
-     * Schließt Modal und speichert die änderungen im Localstorage (LocalStorageCalls) und im Frontend State (props.updatePunkt)
-     */
-    /*const handleClose = () => {
-        console.log("notizen: " + notes);
-       const ob = {
-           "itId": props.item.itId,
-           "todoPunkt": titel,
-           "betrag": betrag,
-           "strich": false,
-           "datum": date,
-           "notizen": notes
-       }
-        props.updatePunkt(props.item.itId, titel, betrag, false, date, notes);
-        setShowM(false);
-    } */
+
 
     /**
      * Schließt Modal nur, ohne zu speichernt, setzt Werte auf vorher zurück

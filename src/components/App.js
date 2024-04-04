@@ -8,6 +8,7 @@ import {LocalStorageIdService} from "../utils/localStorageIdService";
 import {LocalStorageCalls} from "../utils/localStorageCalls";
 import {TransactionListe} from "./transactions/transactionListe";
 import {PayBackTransactionListe} from "./payBackTransactions/payBackTransactionListe";
+import {AxiosCalls} from "../utils/axiosCalls";
 
 /**
  * Main Component
@@ -81,8 +82,22 @@ class App extends React.Component {
         let dataNotDone;
         let dataDone;
         let transactions;
+
+
+        //old frontendOnlyCode
         dataNotDone = LocalStorageCalls('get', 'punkt');
         dataDone = LocalStorageCalls('get', 'punktErledigt');
+
+        //new ConnectBackendCode
+
+        let promise = AxiosCalls('get', '/alleSchuldner');
+        let debitors;
+          promise.then(value => {
+                     debitors = value.data;
+                     console.log("debitors: ", debitors);
+                 });
+
+
         transactions = dataNotDone[0].transactions;
         console.log("backBoth: ", dataNotDone, dataDone);
        // console.log("backBothTransac: ", transactions);
@@ -94,7 +109,7 @@ class App extends React.Component {
      * Man die eingabe konform, speichert im state und localStorage
      * @param value = Der String der Eingegeben wurde
      */
-
+    // Anlegen neuer User
     handleSubmit = (value) => {
 
         if (value !== undefined) { 
@@ -124,10 +139,21 @@ class App extends React.Component {
                 "transactions": [],
             }
 
-            let punkt = [...this.state.punkt];
+            let newDebitor = {
+                 "itId": id,
+                 "debitorName": todoPunkt,
+                 "betrag": 0,
+                 "strich": false,
+                 "date": datum,
+            }
+
+            AxiosCalls('post', '/neuerSchuldner', newDebitor);
+
+
+            /*let punkt = [...this.state.punkt];
                             punkt.push(cPunkt);
               LocalStorageCalls('post', 'punkt', punkt);
-            this.setState({punkt: punkt});
+            this.setState({punkt: punkt}); */
         }
     }
 
