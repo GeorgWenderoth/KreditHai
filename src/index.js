@@ -5,7 +5,11 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import './index.scss';
 import App from './components/App';
+import {TransactionListeUseRouter} from './components/transactions/transactionListeUseRouter';
+
+
 //import reportWebVitals from './reportWebVitals';
+
 
 const router = createBrowserRouter([
 {
@@ -15,8 +19,10 @@ const router = createBrowserRouter([
     errorElement: <div>404 Not Found </div>
 },
 {
+    path: '/transactions/:transactionList',
+    element: <TransactionListeUseRouter/>
 
-}
+},
 
 ]);
 

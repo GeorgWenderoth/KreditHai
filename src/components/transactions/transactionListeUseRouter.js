@@ -4,7 +4,7 @@ import React from "react";
 import "../../Styles.scss";
 import {BereichUeberschrift} from "./../ueberschrift/bereichUeberschrift";
 
-
+import {useParams} from 'react-router-dom';
 
 /**
  * Rendert die Transaktionen
@@ -12,7 +12,9 @@ import {BereichUeberschrift} from "./../ueberschrift/bereichUeberschrift";
  * @returns {JSX.Element}
  * @constructor
  */
-export function TransactionListe (props) {
+export function TransactionListeUseRouter(props) {
+     const params = useParams();
+        console.log("params: ", params);
     console.log("ContainerListe: ", props.itemList);
         let s = props.itemList;
         if(s.lenght > 0){
@@ -20,6 +22,7 @@ export function TransactionListe (props) {
         }
     const test = "name";
         const schuldnerName = props.itemList.length > 0 ? props.itemList[0].name : '';// this.state.transactions > 0 ? this.state.transactions[0].name : '';
+
 
 
     return(

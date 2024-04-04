@@ -5,6 +5,8 @@ import {faPen} from '@fortawesome/free-solid-svg-icons';
 import "../../../Styles.scss";
 import "../../App.scss";
 
+import {Link} from 'react-router-dom';
+
 
 /**
  * Generiert ein Listen element / Item / todopunkt mit den übergebenen werten
@@ -185,12 +187,14 @@ export function ListElement(props) {
                        </Modal>
 
             <Card.Body onClick={(e) => auswahlTransactions()}>
-               
+
                 <div className="punktHull">
                     <p className="punkt">{props.item.todoPunkt}</p>
                     <p> {Number(props.item.betrag).toFixed(2)}</p>
                 </div>
+
             </Card.Body>
+
         </Card>
     )
 }
