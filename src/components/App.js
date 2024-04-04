@@ -42,12 +42,12 @@ class App extends React.Component {
        // this.updateAllDeptTransactions();
         //this.updateInterval = setInterval(this.updateAllDeptTransactions, 5000);
        // this.updateInterval = setInterval(() => this.updateAllDeptTransactions(), 15000);
-       setTimeout(() => {
+     /*  setTimeout(() => {
              this.updateAllDeptTransactions();
 
              // Setze den Interval, um updateAllDeptTransactions alle 5 Minuten aufzurufen
              this.updateInterval = setInterval(() => this.updateAllDeptTransactions(), 300000);
-           }, 15000);
+           }, 15000); */
     }
 
 
@@ -95,6 +95,7 @@ class App extends React.Component {
           promise.then(value => {
                      debitors = value.data;
                      console.log("debitors: ", debitors);
+                     this.setState({punkt: debitors});
                  });
 
 
@@ -184,6 +185,7 @@ class App extends React.Component {
             "notizen": notizen
         }
         punkt[i] = cPunkt;
+
         LocalStorageCalls('post', 'punkt', punkt);
         this.setState({punkt});
         console.log("punktTest: " + id + " " + this.state.punkt[i].itId, this.state.punkt[i].einkaufsPunkt, this.state.punkt[i].notizen);
@@ -209,20 +211,35 @@ class App extends React.Component {
             console.log("cTransactions", cTransactions);
              let tId = LocalStorageIdService();
               let newTransaction = {
-                                                   "itId": id,
-                                                   "tId": tId,
-                                                   "name": title,
-                                                   "betrag": betrag,
+
+                                                   "id": tId,
+                                                   "debitorId": id,
+                                                   "purpose": notizen,
+                                                   "amount": betrag,
                                                    "dept": Number(betrag),
-                                                   "strich": false,
-                                                   "date": datum,
+                                                   "borrowDate": datum,
+                                                   "interestRate": interestRate,
+                                                   "interestFrequency": interestPer,
+                                                   "interestStartDate": freePayBackTime,
                                                    "notizen": notizen,
-                                                   "interest": interestRate,
-                                                   "interestPer": interestPer,
-                                                   "paidBack": 0,
-                                                   "payBackTransactions": [],
-                                                   "updateDate": datum,
-                                                   "freePayBackTime": freePayBackTime,
+                                                    "strich": false,
+                                                    "paidBack": 0,
+                                                    "updateDate": datum,
+                                                    "debitorName": title,
+                                                   /*  "itId": id,
+                                                                                                         "tId": tId,
+                                                   "name": title,
+                                                                                                      "betrag": betrag,
+                                                                                                      "dept": Number(betrag),
+                                                                                                      "strich": false,
+                                                                                                      "date": datum,
+                                                                                                      "notizen": notizen,
+                                                                                                      "interest": interestRate,
+                                                                                                      "interestPer": interestPer,
+                                                                                                      "paidBack": 0,
+                                                                                                      "payBackTransactions": [],
+                                                                                                      "updateDate": datum,
+                                                                                                      "freePayBackTime": freePayBackTime,*/
                                                };
               // cTransactions.push(newTransaction);
                if(Array.isArray(cTransactions)){
@@ -241,7 +258,8 @@ class App extends React.Component {
 
             }
             punkt[i] = cPunkt;
-            LocalStorageCalls('post', 'punkt', punkt);
+            //LocalStorageCalls('post', 'punkt', punkt);
+            AxiosCalls('post', '/neueTransaktion', newTransaction);
             this.setState({punkt});
             console.log("punktTest: " + id + " " + this.state.punkt[i].itId, this.state.punkt[i].einkaufsPunkt, this.state.punkt[i].notizen);
         }

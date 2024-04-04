@@ -187,8 +187,8 @@ export function ListElement(props) {
             <Card.Body onClick={(e) => auswahlTransactions()}>
                
                 <div className="punktHull">
-                    <p className="punkt">{props.item.todoPunkt}</p>
-                    <p> {Number(props.item.betrag).toFixed(2)}</p>
+                    <p className="punkt">{props.item.debitorName}</p>
+                    <p> {Number(props.item.amount).toFixed(2)}</p>
                 </div>
             </Card.Body>
         </Card>

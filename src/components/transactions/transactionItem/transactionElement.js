@@ -126,7 +126,7 @@ export function TransactionElement(props) {
 
         <Card className=  { "transactionCardStyle " + (displayColour ? 'cardColourGrey' : 'cardColourGrey')}
               style={{border: '3px', cursor: "pointer"}}
-              key={props.item.itId.toString()}>
+              key={props.item.debitorId.toString()}>
 
             <div className="buttonHull">
                 <Button style={{display: displayButton}} onClick={handleShow}
@@ -143,13 +143,13 @@ export function TransactionElement(props) {
             <Card.Body onClick={(e) => auswahlPayBackTransactions()}>
 
                 <div className="punktHull">
-                    <p className="punkt">{props.schuldnerName}</p>
-                    <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } > {Number(props.item.dept).toFixed(2)}</p>
-                    <p className="transaktionWhite">{props.item.notizen} </p>
+                    <p className="punkt">{props.debitorName}</p>
+                    <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } > {Number(props.item.amount).toFixed(2)}</p>
+                    <p className="transaktionWhite">{props.item.purpose} </p>
                     <p className="transaktionWhite">{props.item.strich} </p>
-                    <p className="transaktionWhite">{props.item.date}</p>
-                    <p className="transaktionWhite">{props.item.interest} %</p>
-                    <p className="transaktionWhite">Fällig alle: {props.item.interestPer} Tage</p>
+                    <p className="transaktionWhite">{props.item.borrowDate}</p>
+                    <p className="transaktionWhite">{props.item.interestRate} %</p>
+                    <p className="transaktionWhite">Fällig alle: {props.item.interestFrequency} Tage</p>
                     <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{props.item.betrag}</p>
                 </div>
 
