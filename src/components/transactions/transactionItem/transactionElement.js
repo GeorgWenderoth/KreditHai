@@ -4,6 +4,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPen, faCheck} from '@fortawesome/free-solid-svg-icons';
 import "../../../Styles.scss";
 import "../../App.scss";
+import {Link} from "react-router-dom";
+import {AxiosCalls} from "../../../utils/axiosCalls";
 
 
 /**
@@ -65,8 +67,20 @@ export function TransactionElement(props) {
                    "strich": false,
                    "datum": date,
                    "notizen": notes,
-               }                                                        //notizen statt titel, weil das ja der name der schulden ist
-                props.updateTransaction(props.item.itId, props.item.tId, props.schuldnerName, props.item.notizen, betrag, date, notes,false);
+               }
+
+               const newPayBackTransaction = {
+                    "id": 1,
+                    "transactionId": props.item.id,
+                    "debitorId": props.item.debitorId,
+                    "amount": betrag,
+                    "payBackDate": date,
+                    "notes": notes,
+               }
+
+                                                                   //notizen statt titel, weil das ja der name der schulden ist
+               // props.updateTransaction(props.item.itId, props.item.tId, props.schuldnerName, props.item.notizen, betrag, date, notes,false);
+                AxiosCalls('post', '/neuePayBackTransaktion', newPayBackTransaction);
 
                 setDisplayColour(betrag >= 0 ? true : false);
                 setShowM(false);
@@ -140,8 +154,8 @@ export function TransactionElement(props) {
 
             </div>
 
-            <Card.Body onClick={(e) => auswahlPayBackTransactions()}>
-
+            <Card.Body >
+               <Link to={`/payBackTransactions/${props.item.id}`} style={{ textDecoration: 'none' }} >
                 <div className="punktHull">
                     <p className="punkt">{props.debitorName}</p>
                     <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } > {Number(props.item.amount).toFixed(2)}</p>
@@ -152,7 +166,7 @@ export function TransactionElement(props) {
                     <p className="transaktionWhite">Fällig alle: {props.item.interestFrequency} Tage</p>
                     <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{props.item.betrag}</p>
                 </div>
-
+               </Link>
                 <Modal show={showM} onHide={handleCloseWithoutSaving}>
                            <Modal.Header closeButton>
                                <Modal.Title>
@@ -201,3 +215,5 @@ export function TransactionElement(props) {
 
     )
 }
+
+//<Card.Body onClick={(e) => auswahlPayBackTransactions()}>

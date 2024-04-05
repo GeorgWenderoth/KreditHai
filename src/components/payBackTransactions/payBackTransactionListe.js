@@ -1,8 +1,10 @@
 import {PayBackTransactionElement} from "./payBackTransactionItem/payBackTransactionElement"
 import {Container} from "react-bootstrap";
-import React from "react";
+import React, {useState, useEffect} from "react";
 import "../../Styles.scss";
 import {BereichUeberschrift} from "./../ueberschrift/bereichUeberschrift";
+import {AxiosCalls} from "../../utils/axiosCalls";
+import {useParams} from 'react-router-dom';
 
 /**
  * Rendert die Transaktionen
@@ -11,8 +13,14 @@ import {BereichUeberschrift} from "./../ueberschrift/bereichUeberschrift";
  * @constructor
  */
 export function PayBackTransactionListe (props) {
+
+    const params = useParams();
+
+
+    const [payBackTransactions, setPayBackTransactions] = useState([]);
+
     //console.log("PayBackTransactionListe: ", props.itemList);
-        let s = props.itemList;
+    /*    let s = props.itemList;
         if(s == null) {
         s = [{}];
         };
@@ -22,15 +30,25 @@ export function PayBackTransactionListe (props) {
     const test = "name";
         //const schuldnerName = props.itemList.length > 0 ? props.itemList[0].name : '';// this.state.transactions > 0 ? this.state.transactions[0].name : '';
         const schuldnerName = s.length > 0 ? s[0].name : '';// this.state.transactions > 0 ? this.state.transactions[0].name : '';
-        console.log("name: ", schuldnerName);
+        console.log("name: ", schuldnerName); */
+
+         useEffect(() => {
+                let promise = AxiosCalls('get', '/payBackTransaktionen?transactionId=' + params.transactionId);
+                    let cPayBackTransactions = [];
+                     promise.then(value => {
+                                         cPayBackTransactions = value.data;
+                                         console.log("transactions: ", cPayBackTransactions);
+                                         setPayBackTransactions( cPayBackTransactions);
+                                     });
+
+                }, []);
 
     return(
         <Container className="container">
-            <p>{ schuldnerName}</p>
-             <BereichUeberschrift ueberschrift={schuldnerName}/>
+
             <div className="row row-cols-1 row-cols-md-3 row-cols-lg-6 g-2 g-lg-3 reihe d-flex justify-content-evenly">
 
-                    {props.itemList.map((item) => <div className="col"><PayBackTransactionElement item={item} id={item.itId}
+                    {payBackTransactions.map((item) => <div className="col"><PayBackTransactionElement item={item} id={item.itId}
 
                                                                  /> </div>) }
 

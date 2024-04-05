@@ -15,6 +15,9 @@ import {useParams} from 'react-router-dom';
  */
 export function TransactionListeUseRouter(props) {
 
+    const params = useParams();
+
+
     const [transactions, setTransactions] = useState([]);
    /*  const params = useParams();
         console.log("params: ", params);
@@ -26,7 +29,7 @@ export function TransactionListeUseRouter(props) {
     const test = "name";
         const schuldnerName = props.itemList.length > 0 ? props.itemList[0].name : '';// this.state.transactions > 0 ? this.state.transactions[0].name : ''; */
 
-    useEffect(() => {
+   /* useEffect(() => {
     let promise = AxiosCalls('get', '/alleTransaktionen');
         let cTransactions = [];
          promise.then(value => {
@@ -35,7 +38,20 @@ export function TransactionListeUseRouter(props) {
                              setTransactions(cTransactions);
                          });
 
-    }, []);
+    }, []); */
+
+     useEffect(() => {
+        let promise = AxiosCalls('get', '/Transaktionen?debitorId=' + params.debitorId);
+            let cTransactions = [];
+             promise.then(value => {
+                                 cTransactions = value.data;
+                                 console.log("transactions: ", cTransactions);
+                                 setTransactions(cTransactions);
+                             });
+
+        }, []);
+
+
 
 
 
