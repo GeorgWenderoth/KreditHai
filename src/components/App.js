@@ -756,7 +756,7 @@ class App extends React.Component {
                                  deleteTransaction={(id, tId)=> this.deleteTransaction(id, tId)}
                 />
 
-                <PayBackTransactionListe itemList={this.state.payBackTransactions}/>
+
 
 
                                 //causing error, coz possible loop, // ich glaube ich muss das in nem anderen component machen
@@ -779,3 +779,5 @@ class App extends React.Component {
 }
 
 export default App;
+
+

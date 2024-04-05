@@ -23,7 +23,7 @@ const router = createBrowserRouter([
 
 },
 {
-    path: 'payBackTransactions/:transactionId',
+    path: 'payBackTransactions/:transactionId/:purpose',
     element: <PayBackTransactionListe/>
 }
 

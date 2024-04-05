@@ -14,10 +14,14 @@ import {useParams} from 'react-router-dom';
  */
 export function PayBackTransactionListe (props) {
 
-    const params = useParams();
+   // const params = useParams();
+    const { transactionId, purpose } = useParams();
+
 
 
     const [payBackTransactions, setPayBackTransactions] = useState([]);
+    //const [purpose, setPurpose] = useState("");
+
 
     //console.log("PayBackTransactionListe: ", props.itemList);
     /*    let s = props.itemList;
@@ -33,12 +37,15 @@ export function PayBackTransactionListe (props) {
         console.log("name: ", schuldnerName); */
 
          useEffect(() => {
-                let promise = AxiosCalls('get', '/payBackTransaktionen?transactionId=' + params.transactionId);
+         console.log("transactionId: ", transactionId)
+         console.log("purpose: ", purpose)
+                let promise = AxiosCalls('get', '/payBackTransaktionen?transactionId=' + transactionId);
                     let cPayBackTransactions = [];
                      promise.then(value => {
                                          cPayBackTransactions = value.data;
                                          console.log("transactions: ", cPayBackTransactions);
                                          setPayBackTransactions( cPayBackTransactions);
+
                                      });
 
                 }, []);
@@ -48,7 +55,7 @@ export function PayBackTransactionListe (props) {
 
             <div className="row row-cols-1 row-cols-md-3 row-cols-lg-6 g-2 g-lg-3 reihe d-flex justify-content-evenly">
 
-                    {payBackTransactions.map((item) => <div className="col"><PayBackTransactionElement item={item} id={item.itId}
+                    {payBackTransactions.map((item) => <div className="col"><PayBackTransactionElement item={item} id={item.itId} purpose={purpose}
 
                                                                  /> </div>) }
 

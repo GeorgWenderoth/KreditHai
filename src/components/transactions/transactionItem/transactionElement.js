@@ -70,7 +70,7 @@ export function TransactionElement(props) {
                }
 
                const newPayBackTransaction = {
-                    "id": 1,
+                    "id": null,
                     "transactionId": props.item.id,
                     "debitorId": props.item.debitorId,
                     "amount": betrag,
@@ -155,7 +155,7 @@ export function TransactionElement(props) {
             </div>
 
             <Card.Body >
-               <Link to={`/payBackTransactions/${props.item.id}`} style={{ textDecoration: 'none' }} >
+               <Link to={`/payBackTransactions/${props.item.id}/${props.item.purpose}`} style={{ textDecoration: 'none' }} >
                 <div className="punktHull">
                     <p className="punkt">{props.debitorName}</p>
                     <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } > {Number(props.item.amount).toFixed(2)}</p>

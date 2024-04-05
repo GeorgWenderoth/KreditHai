@@ -87,8 +87,9 @@ export function PayBackTransactionElement(props) {
 
                 <div className="punktHull">
                     <p className="punkt">{props.item.debitorName}</p>
+                    <p className="punkt">{props.purpose}</p>
                     <p className="punkt">{props.item.transactionNote}</p>
-                    <p className="transaktionWhite">{props.item.payBackNote} </p>
+                    <p className="transaktionWhite">{props.item.notes} </p>
                     <p className="transaktionWhite">{props.item.payBackDate}</p>
                     <p className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{props.item.amount}</p>
                 </div>
