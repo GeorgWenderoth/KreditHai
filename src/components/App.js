@@ -148,13 +148,14 @@ class App extends React.Component {
                  "date": datum,
             }
 
-            AxiosCalls('post', '/neuerSchuldner', newDebitor);
+            let promise = AxiosCalls('post', '/neuerSchuldner', newDebitor);
+            promise.then(item => {
 
+                let debitors = [...this.state.punkt];
+                debitors.push(item.data);
+                this.setState({punkt: debitors});
+            });
 
-            /*let punkt = [...this.state.punkt];
-                            punkt.push(cPunkt);
-              LocalStorageCalls('post', 'punkt', punkt);
-            this.setState({punkt: punkt}); */
         }
     }
 
