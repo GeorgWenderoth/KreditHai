@@ -201,10 +201,14 @@ class App extends React.Component {
             console.log("p", punkt[1]);
             let i = punkt.map(a => a.itId).indexOf(id);
             console.log("i: " + i);
-            let cPunkt = {...punkt[id]};
+            let cDebitor = {...punkt[id]};
             let pBetrag = parseInt(betrag);
-            let zBetrag = parseInt(punkt[i].betrag);
+            let zBetrag = parseInt(punkt[i].amount);
             let nBetrag = Number(zBetrag) + Number(betrag);
+            let ergebniss = zBetrag + betrag;
+            console.log("nBetrag: ", nBetrag);
+            console.log("ergebniss: ", ergebniss);
+            console.log("betrag: ", betrag)
             console.log("zBetrag: ", zBetrag);
             console.log("rechnung", nBetrag);
 
@@ -248,20 +252,27 @@ class App extends React.Component {
                } else {
                cTransactions = [newTransaction];
                };
-            cPunkt = {
+            cDebitor = {
                 "itId": id,
                 "todoPunkt": title,
                 "betrag": nBetrag,
                 "strich": harken,
                 "date": datum,
                 "notizen": notizen,
-                 "transactions": cTransactions,
+               //  "transactions": cTransactions,
 
             }
-            punkt[i] = cPunkt;
+            punkt[i] = cDebitor;
             //LocalStorageCalls('post', 'punkt', punkt);
-            AxiosCalls('post', '/neueTransaktion', newTransaction);
-            this.setState({punkt});
+            let promise = AxiosCalls('post', '/neueTransaktion', newTransaction);
+            promise.then(item => {
+
+                            let debitors = [...this.state.punkt];
+
+                            debitors.push(cDebitor);
+                            this.setState({punkt});
+                        });
+          //  this.setState({punkt});
             console.log("punktTest: " + id + " " + this.state.punkt[i].itId, this.state.punkt[i].einkaufsPunkt, this.state.punkt[i].notizen);
         }
 
@@ -314,7 +325,7 @@ class App extends React.Component {
                                                                borrowDate= new Date(borrowDate.getFullYear(), borrowDate.getMonth(), borrowDate.getDate());
 
                                                                let updateDate = new Date(transaction.updateDate);
-                                                                   updateDate = new Date( updateDate.getFullYear(), updateDate.getMonth(), updateDate.getDate());
+                                                               updateDate = new Date( updateDate.getFullYear(), updateDate.getMonth(), updateDate.getDate());
 
                                                                // Datum bis zu dem man ohne interest/ Zinsen zurückzahen kann
                                                                let freePayBackDate = new Date(transaction.freePayBackTime);
@@ -376,6 +387,8 @@ class App extends React.Component {
 
                                                                // applying interesst to a single transaction
                                                                         //(important here is if its empty or 0, how should the logic work? with 0 you could have one interation tho intersst mid be applied
+
+                                                                 //doesnt  make sense? es müssen nur so viele vergangene tage wie frecency sein nicht payDays
                                                                if (payDays >= transaction.interestPer && transaction.interestPer > 0) {
                                                                             console.log("Zinsen");
                                                                             console.log("trnsaction.dept: ", transaction.dept);
