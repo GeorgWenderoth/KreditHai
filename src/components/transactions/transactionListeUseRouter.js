@@ -42,12 +42,7 @@ export function TransactionListeUseRouter(props) {
 
 
     const handleSmartPay = () => {
-        if(payBackMoney > 0){
-        let promise =  AxiosCalls('post', '/smartPayBack?days=' + days +'&payBackMoney=' + payBackMoney + '&debitorId=' + params.debitorId);
-        } else if(payBackMoney < 0) {
-         let promise =  AxiosCalls('post', '/smartPositivePayBack?days=' + days +'&payBackMoney=' + payBackMoney + '&debitorId=' + params.debitorId);
-        }
-
+     let promise =  AxiosCalls('post', '/smartPayBack?days=' + days +'&payBackMoney=' + payBackMoney + '&debitorId=' + params.debitorId);
      }
 
 
