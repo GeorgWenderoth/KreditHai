@@ -53,12 +53,12 @@ export function ListElement(props) {
             "date": "2022-07-11"
         }
         props.auswahlTransactions(props.id, props.item.strich);
-
     }
 
     /**
      * Schließt Modal und speichert die änderungen im Localstorage (LocalStorageCalls) und im Frontend State (props.updatePunkt)
      */
+     //Speichert änderungen im Backend, Zukünftig, axios post request gleich hier?
     const handleClose = () => {
         console.log("notizen: " + notes);
       if(isUpdating){
