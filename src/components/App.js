@@ -10,6 +10,8 @@ import {TransactionListe} from "./transactions/transactionListeOld";
 import {PayBackTransactionListe} from "./payBackTransactions/payBackTransactionListe";
 import {AxiosCalls} from "../utils/axiosCalls";
 
+//! Frontend gerade noch total im Umbau, da Logic jetzt ins (neue) Backend verschoben wurde. "Backend first approach" !
+
 /**
  * Main Component
  * Rendert alle anderen Components
@@ -31,7 +33,7 @@ class App extends React.Component {
 
         };
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.deleteAllDoneItems = this.deleteAllDoneItems.bind(this);
+      //  this.deleteAllDoneItems = this.deleteAllDoneItems.bind(this);
         this.handleCloseErrorModal = this.handleCloseErrorModal.bind(this);
     }
 
@@ -40,6 +42,7 @@ class App extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+    //future need
     }
 
     componentWillUnmount() {
@@ -48,16 +51,15 @@ class App extends React.Component {
     }
 
     backBoth() {
+    //new ConnectBackendCode
         let transactions;
-        //new ConnectBackendCode
-
         let promise = AxiosCalls('get', '/alleSchuldner');
         let debitors;
-          promise.then(value => {
+        promise.then(value => {
                      debitors = value.data;
                      console.log("debitors: ", debitors);
                      this.setState({punkt: debitors});
-                 });
+        });
     }
 
     /**
@@ -65,28 +67,23 @@ class App extends React.Component {
      * @param value = Der String der Eingegeben wurde
      */
     // Anlegen neuer User
-    //Wichtig!!
     handleSubmit = (value) => {
 
         if (value !== undefined) { 
             console.log("submitValue:", value);
             const trim = value.trim();
             const split = trim.split(/(\d+)/);
-            let anzahl;
-            console.log("anzahl Split: ", split[split.length -2]);
-        
-            let todoPunkt = split.toString();
-            todoPunkt = todoPunkt.trim();
-            todoPunkt = todoPunkt.replace(/,/g, '');
+
+            let debitorName = split.toString();
+            debitorName = debitorName.trim();
+            debitorName = debitorName.replace(/,/g, '');
             let date = new Date();
             let datum =  date.toISOString().split('T')[0];
 
-
-           let id = LocalStorageIdService();
-
+            let id = LocalStorageIdService();
             let newDebitor = {
                  "itId": id,
-                 "debitorName": todoPunkt,
+                 "debitorName": debitorName,
                  "betrag": 0,
                  "strich": false,
                  "date": datum,
@@ -94,28 +91,25 @@ class App extends React.Component {
 
             let promise = AxiosCalls('post', '/neuerSchuldner', newDebitor);
             promise.then(item => {
-
                 let debitors = [...this.state.punkt];
                 debitors.push(item.data);
                 this.setState({punkt: debitors});
             });
-
         }
     }
 
     /**
-     * Von child to parent component, Wird im Child  listElement aufgerufen und mit de übergeben werte wird im state in ein orbjekt geupdatet
+     * Von child to parent component, Wird im Child  listElement aufgerufen und mit den übergeben werte wird ein axiosRequest (transaction) ans Backend gesendet,
+      wenn erfolgreich wird das transaction Object in den state geupdatet
      * @param {number} id - id des objekts fürs localstorage /backend
      * @param {string} title - todoPunkt (name des To-dos)
      * @param  harken - sind die To-dos erledigt oder nicht
      * @param {number} datum - Das Datum wann ein To-do erledigt werden soll
      * @param {string} notizen - Notizen / bemerkungen
+     * ...
      */
-
-
-    //Wichtig!!! post transaction!
-    addTransactionInState(id, title, betrag, harken, datum, notizen, interestRate, interestPer, freePayBackTime) {
-
+    //post transaction!
+    addTransactionToBackendAndState(id, title, betrag, harken, datum, notizen, interestRate, interestPer, freePayBackTime) {
 
             let punkt = [...this.state.punkt];
             console.log("p", punkt[1]);
@@ -127,12 +121,8 @@ class App extends React.Component {
             let nBetrag = Number(zBetrag) + Number(betrag);
             let ergebniss = zBetrag + betrag;
 
-
-            var cTransactions = punkt[i].transactions;
-
              let tId = LocalStorageIdService();
               let newTransaction = {
-
                                                    "id": tId,
                                                    "debitorId": id,
                                                    "purpose": notizen,
@@ -147,48 +137,18 @@ class App extends React.Component {
                                                     "paidBack": 0,
                                                     "updateDate": datum,
                                                     "debitorName": title,
-
                                                };
-
-               if(Array.isArray(cTransactions)){
-               cTransactions.push(newTransaction);
-               } else {
-               cTransactions = [newTransaction];
-               };
-            cDebitor = {
-                "itId": id,
-                "todoPunkt": title,
-                "betrag": nBetrag,
-                "strich": harken,
-                "date": datum,
-                "notizen": notizen,
-               //  "transactions": cTransactions,
-
-            }
-            punkt[i] = cDebitor;
-            //LocalStorageCalls('post', 'punkt', punkt);
             let promise = AxiosCalls('post', '/neueTransaktion', newTransaction);
             promise.then(item => {
-
                             let debitors = [...this.state.punkt];
                             debitors.push(cDebitor);
                             this.setState({punkt});
                         });
-
-            console.log("punktTest: " + id + " " + this.state.punkt[i].itId, this.state.punkt[i].einkaufsPunkt, this.state.punkt[i].notizen);
         }
 
-    /**
-     *  Löscht alle erledigten Items / To-dos
-     */
-    deleteAllDoneItems() {
-        LocalStorageCalls('delete')
-        this.setState({punktErledigt: []});
 
-    }
-        // Wichtig!!!!
         deleateSpecificItem(id){
-
+           // veralted, muss noch auf backend umgestellt werden!
           const punktArray = JSON.parse(localStorage.getItem('punkt')); // get data from LS
                     let indexPunkt = punktArray.map(a => a.itId).indexOf(id);
 
@@ -201,10 +161,10 @@ class App extends React.Component {
              punkt.splice(indexItem, 1);
              this.setState({punkt: punkt});
 
-             //axiosCalls to Bakend und nen Läsch endpunkt
+             //axiosCalls to Backend und nen LöschEndpunkt
         }
 
-        // new for errorModal 01.02.24
+        // new for errorModal 01.02.24, //for future need
         handleCloseErrorModal(){
             this.setState({showM: false});
         }
@@ -222,13 +182,12 @@ class App extends React.Component {
                 <BereichUeberschrift ueberschrift={"Zu erledigende To-dos"}/>
                 <ContainerListe itemList={this.state.punkt}
                                 updatePunkt={(id, title, betrag, harken, datum, notizen, interestRate, interestPer, freePayBackTime) =>
-                                    this.addTransactionInState(id, title, betrag, harken, datum, notizen, interestRate, interestPer, freePayBackTime)}
+                                    this.addTransactionToBackendAndState(id, title, betrag, harken, datum, notizen, interestRate, interestPer, freePayBackTime)}
                                 auswahlTransactions={(id, harken) => this.auswahlTransactions(id, harken)}
                                 deletePunkt ={(id)=> this.deleateSpecificItem(id)}
                                 />
 
-
-                                //causing error, coz possible loop, // ich glaube ich muss das in nem anderen component machen
+                              //causing error, coz possible loop, // ich glaube ich muss das in nem anderen component machen // for future need
                                 <Modal show={this.state.showM} onHide={this.handleCloseErrorModal} >
                                                                        <Modal.Header className="bg-danger" closeButton>
                                                                            <Modal.Title>
