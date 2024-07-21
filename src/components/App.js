@@ -10,7 +10,8 @@ import {TransactionListe} from "./transactions/transactionListeOld";
 import {PayBackTransactionListe} from "./payBackTransactions/payBackTransactionListe";
 import {AxiosCalls} from "../utils/axiosCalls";
 
-//! Frontend gerade noch total im Umbau, da Logic jetzt ins (neue) Backend verschoben wurde. "Backend first approach" !
+//! Frontend gerade noch total im Umbau, da Logic jetzt ins (neue) Backend verschoben wurde und wird. -> Backend wird Priorisiert
+//Noch nicht alle fetures fertig im Backend implementiert -> nicht alle Fetures funktionieren derzeit!
 
 /**
  * Main Component
