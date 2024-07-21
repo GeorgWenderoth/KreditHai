@@ -27,6 +27,8 @@ export function PayBackTransactionElement(props) {
 
 
 
+
+
     /**
      * Speichert die Anzahl onchange in den State
      * @param e
@@ -77,18 +79,19 @@ export function PayBackTransactionElement(props) {
 
         <Card className=  { "transactionCardStyle " + (displayColour ? 'cardColourGrey' : 'cardColourGrey')}
               style={{border: '3px', cursor: "pointer"}}
-              key={props.item.itId.toString()}>
+              key={props.item.debitorId.toString()}>
 
 
 
             <Card.Body >
 
                 <div className="punktHull">
-                    <p className="punkt">{props.item.schuldnerName}</p>
+                    <p className="punkt">{props.item.debitorName}</p>
+                    <p className="punkt">{props.purpose}</p>
                     <p className="punkt">{props.item.transactionNote}</p>
-                    <p className="transaktionWhite">{props.item.payBackNote} </p>
-                    <p className="transaktionWhite">{props.item.date}</p>
-                    <p className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{props.item.betrag}</p>
+                    <p className="transaktionWhite">{props.item.notes} </p>
+                    <p className="transaktionWhite">{props.item.payBackDate}</p>
+                    <p className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{props.item.amount}</p>
                 </div>
 
 

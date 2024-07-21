@@ -79,7 +79,7 @@ export function ToDoHeader(props){
                     }) => (
                         <Form className="row g-3 justify-content-center" >
                             <div className="col-auto">
-                                <Field type="text" name={"todopunkt"}  className="form-control"  id="inp" placeholder="To-do"/>
+                                <Field type="text" name={"todopunkt"}  className="form-control"  id="inp" placeholder="Debitor"/>
                                 <ErrorMessage name={"todopunkt"} />
                             </div>
                             <div className="col-auto">

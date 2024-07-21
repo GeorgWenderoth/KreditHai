@@ -4,6 +4,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPen, faCheck} from '@fortawesome/free-solid-svg-icons';
 import "../../../Styles.scss";
 import "../../App.scss";
+import {Link} from "react-router-dom";
+import {AxiosCalls} from "../../../utils/axiosCalls";
 
 
 /**
@@ -24,7 +26,7 @@ export function TransactionElement(props) {
     const [displayButton, setDisplayButton] = useState(props.item.strich ? "none" : "visible");
     const [displayTick, setDisplayTick] = useState(props.item.strich ? "visible": "none");
     const [displayColour, setDisplayColour] = useState(props.item.betrag >= 0 ? true : false );
-    const [dept, setDept] = useState(props.item.betrag);
+    const [dept, setDept] = useState(props.item.originalAmount);
 
 
 
@@ -52,7 +54,9 @@ export function TransactionElement(props) {
         props.auswahlPayBackTransactions(props.id, props.item.tId);
 
     }
-    // was für todopunkt da muss tile rein
+     /**
+      * Schließt Modal und speichert die änderungen im Localstorage (LocalStorageCalls) und im Frontend State (props.updatePunkt)
+      */
     const handleClose = () => {
             console.log("notizen: " + notes);
            if(showM){
@@ -63,8 +67,20 @@ export function TransactionElement(props) {
                    "strich": false,
                    "datum": date,
                    "notizen": notes,
-               }                                                        //notizen statt titel, weil das ja der name der schulden ist
-                props.updateTransaction(props.item.itId, props.item.tId, props.schuldnerName, props.item.notizen, betrag, date, notes,false);
+               }
+
+               const newPayBackTransaction = {
+                    "id": null,
+                    "transactionId": props.item.id,
+                    "debitorId": props.item.debitorId,
+                    "amount": betrag,
+                    "payBackDate": date,
+                    "notes": notes,
+               }
+
+                                                                   //notizen statt titel, weil das ja der name der schulden ist
+               // props.updateTransaction(props.item.itId, props.item.tId, props.schuldnerName, props.item.notizen, betrag, date, notes,false);
+                AxiosCalls('post', '/neuePayBackTransaktion', newPayBackTransaction);
 
                 setDisplayColour(betrag >= 0 ? true : false);
                 setShowM(false);
@@ -81,22 +97,7 @@ export function TransactionElement(props) {
         setShowM(false);
     }
 
-    /**
-     * Schließt Modal und speichert die änderungen im Localstorage (LocalStorageCalls) und im Frontend State (props.updatePunkt)
-     */
-    /*const handleClose = () => {
-        console.log("notizen: " + notes);
-       const ob = {
-           "itId": props.item.itId,
-           "todoPunkt": titel,
-           "betrag": betrag,
-           "strich": false,
-           "datum": date,
-           "notizen": notes
-       }
-        props.updatePunkt(props.item.itId, titel, betrag, false, date, notes);
-        setShowM(false);
-    } */
+
 
     /**
      * Schließt Modal nur, ohne zu speichernt, setzt Werte auf vorher zurück
@@ -139,7 +140,7 @@ export function TransactionElement(props) {
 
         <Card className=  { "transactionCardStyle " + (displayColour ? 'cardColourGrey' : 'cardColourGrey')}
               style={{border: '3px', cursor: "pointer"}}
-              key={props.item.itId.toString()}>
+              key={props.item.debitorId.toString()}>
 
             <div className="buttonHull">
                 <Button style={{display: displayButton}} onClick={handleShow}
@@ -153,19 +154,20 @@ export function TransactionElement(props) {
 
             </div>
 
-            <Card.Body onClick={(e) => auswahlPayBackTransactions()}>
-
+            <Card.Body >
+               <Link to={`/payBackTransactions/${props.item.id}/${props.item.purpose}`} style={{ textDecoration: 'none' }} >
                 <div className="punktHull">
-                    <p className="punkt">{props.schuldnerName}</p>
-                    <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } > {Number(props.item.dept).toFixed(2)}</p>
-                    <p className="transaktionWhite">{props.item.notizen} </p>
+                    <p className="punkt">{props.debitorName}</p>
+                    <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } > {Number(props.item.amount).toFixed(2)}</p>
+                    <p className="transaktionWhite">{props.item.purpose} </p>
                     <p className="transaktionWhite">{props.item.strich} </p>
-                    <p className="transaktionWhite">{props.item.date}</p>
-                    <p className="transaktionWhite">{props.item.interest} %</p>
-                    <p className="transaktionWhite">Fällig alle: {props.item.interestPer} Tage</p>
-                    <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{props.item.betrag}</p>
+                    <p className="transaktionWhite">{props.item.borrowDate}</p>
+                    <p className="transaktionWhite">{props.item.interestRate} %</p>
+                    <p className="transaktionWhite">Fällig alle: {props.item.interestFrequency} Tage</p>
+                    <p className="transaktionWhite">Zukünftige Zinsen: {props.item.futureInterest.toFixed(4)}</p>
+                    <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{props.item.originalAmount}</p>
                 </div>
-
+               </Link>
                 <Modal show={showM} onHide={handleCloseWithoutSaving}>
                            <Modal.Header closeButton>
                                <Modal.Title>
@@ -214,3 +216,5 @@ export function TransactionElement(props) {
 
     )
 }
+
+//<Card.Body onClick={(e) => auswahlPayBackTransactions()}>

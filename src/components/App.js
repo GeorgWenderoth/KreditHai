@@ -6,8 +6,9 @@ import {BereichUeberschrift} from "./ueberschrift/bereichUeberschrift";
 import {ContainerListe} from "./liste/containerListe";
 import {LocalStorageIdService} from "../utils/localStorageIdService";
 import {LocalStorageCalls} from "../utils/localStorageCalls";
-import {TransactionListe} from "./transactions/transactionListe";
+import {TransactionListe} from "./transactions/transactionListeOld";
 import {PayBackTransactionListe} from "./payBackTransactions/payBackTransactionListe";
+import {AxiosCalls} from "../utils/axiosCalls";
 
 /**
  * Main Component
@@ -41,12 +42,12 @@ class App extends React.Component {
        // this.updateAllDeptTransactions();
         //this.updateInterval = setInterval(this.updateAllDeptTransactions, 5000);
        // this.updateInterval = setInterval(() => this.updateAllDeptTransactions(), 15000);
-       setTimeout(() => {
+     /*  setTimeout(() => {
              this.updateAllDeptTransactions();
 
              // Setze den Interval, um updateAllDeptTransactions alle 5 Minuten aufzurufen
              this.updateInterval = setInterval(() => this.updateAllDeptTransactions(), 300000);
-           }, 15000);
+           }, 15000); */
     }
 
 
@@ -81,8 +82,23 @@ class App extends React.Component {
         let dataNotDone;
         let dataDone;
         let transactions;
+
+
+        //old frontendOnlyCode
         dataNotDone = LocalStorageCalls('get', 'punkt');
         dataDone = LocalStorageCalls('get', 'punktErledigt');
+
+        //new ConnectBackendCode
+
+        let promise = AxiosCalls('get', '/alleSchuldner');
+        let debitors;
+          promise.then(value => {
+                     debitors = value.data;
+                     console.log("debitors: ", debitors);
+                     this.setState({punkt: debitors});
+                 });
+
+
         transactions = dataNotDone[0].transactions;
         console.log("backBoth: ", dataNotDone, dataDone);
        // console.log("backBothTransac: ", transactions);
@@ -94,7 +110,7 @@ class App extends React.Component {
      * Man die eingabe konform, speichert im state und localStorage
      * @param value = Der String der Eingegeben wurde
      */
-
+    // Anlegen neuer User
     handleSubmit = (value) => {
 
         if (value !== undefined) { 
@@ -124,10 +140,22 @@ class App extends React.Component {
                 "transactions": [],
             }
 
-            let punkt = [...this.state.punkt];
-                            punkt.push(cPunkt);
-              LocalStorageCalls('post', 'punkt', punkt);
-            this.setState({punkt: punkt});
+            let newDebitor = {
+                 "itId": id,
+                 "debitorName": todoPunkt,
+                 "betrag": 0,
+                 "strich": false,
+                 "date": datum,
+            }
+
+            let promise = AxiosCalls('post', '/neuerSchuldner', newDebitor);
+            promise.then(item => {
+
+                let debitors = [...this.state.punkt];
+                debitors.push(item.data);
+                this.setState({punkt: debitors});
+            });
+
         }
     }
 
@@ -158,6 +186,7 @@ class App extends React.Component {
             "notizen": notizen
         }
         punkt[i] = cPunkt;
+
         LocalStorageCalls('post', 'punkt', punkt);
         this.setState({punkt});
         console.log("punktTest: " + id + " " + this.state.punkt[i].itId, this.state.punkt[i].einkaufsPunkt, this.state.punkt[i].notizen);
@@ -172,10 +201,14 @@ class App extends React.Component {
             console.log("p", punkt[1]);
             let i = punkt.map(a => a.itId).indexOf(id);
             console.log("i: " + i);
-            let cPunkt = {...punkt[id]};
+            let cDebitor = {...punkt[id]};
             let pBetrag = parseInt(betrag);
-            let zBetrag = parseInt(punkt[i].betrag);
+            let zBetrag = parseInt(punkt[i].amount);
             let nBetrag = Number(zBetrag) + Number(betrag);
+            let ergebniss = zBetrag + betrag;
+            console.log("nBetrag: ", nBetrag);
+            console.log("ergebniss: ", ergebniss);
+            console.log("betrag: ", betrag)
             console.log("zBetrag: ", zBetrag);
             console.log("rechnung", nBetrag);
 
@@ -183,20 +216,35 @@ class App extends React.Component {
             console.log("cTransactions", cTransactions);
              let tId = LocalStorageIdService();
               let newTransaction = {
-                                                   "itId": id,
-                                                   "tId": tId,
-                                                   "name": title,
-                                                   "betrag": betrag,
+
+                                                   "id": tId,
+                                                   "debitorId": id,
+                                                   "purpose": notizen,
+                                                   "amount": betrag,
                                                    "dept": Number(betrag),
-                                                   "strich": false,
-                                                   "date": datum,
+                                                   "borrowDate": datum,
+                                                   "interestRate": interestRate,
+                                                   "interestFrequency": interestPer,
+                                                   "interestStartDate": freePayBackTime,
                                                    "notizen": notizen,
-                                                   "interest": interestRate,
-                                                   "interestPer": interestPer,
-                                                   "paidBack": 0,
-                                                   "payBackTransactions": [],
-                                                   "updateDate": datum,
-                                                   "freePayBackTime": freePayBackTime,
+                                                    "strich": false,
+                                                    "paidBack": 0,
+                                                    "updateDate": datum,
+                                                    "debitorName": title,
+                                                   /*  "itId": id,
+                                                                                                         "tId": tId,
+                                                   "name": title,
+                                                                                                      "betrag": betrag,
+                                                                                                      "dept": Number(betrag),
+                                                                                                      "strich": false,
+                                                                                                      "date": datum,
+                                                                                                      "notizen": notizen,
+                                                                                                      "interest": interestRate,
+                                                                                                      "interestPer": interestPer,
+                                                                                                      "paidBack": 0,
+                                                                                                      "payBackTransactions": [],
+                                                                                                      "updateDate": datum,
+                                                                                                      "freePayBackTime": freePayBackTime,*/
                                                };
               // cTransactions.push(newTransaction);
                if(Array.isArray(cTransactions)){
@@ -204,214 +252,30 @@ class App extends React.Component {
                } else {
                cTransactions = [newTransaction];
                };
-            cPunkt = {
+            cDebitor = {
                 "itId": id,
                 "todoPunkt": title,
                 "betrag": nBetrag,
                 "strich": harken,
                 "date": datum,
                 "notizen": notizen,
-                 "transactions": cTransactions,
+               //  "transactions": cTransactions,
 
             }
-            punkt[i] = cPunkt;
-            LocalStorageCalls('post', 'punkt', punkt);
-            this.setState({punkt});
+            punkt[i] = cDebitor;
+            //LocalStorageCalls('post', 'punkt', punkt);
+            let promise = AxiosCalls('post', '/neueTransaktion', newTransaction);
+            promise.then(item => {
+
+                            let debitors = [...this.state.punkt];
+
+                            debitors.push(cDebitor);
+                            this.setState({punkt});
+                        });
+          //  this.setState({punkt});
             console.log("punktTest: " + id + " " + this.state.punkt[i].itId, this.state.punkt[i].einkaufsPunkt, this.state.punkt[i].notizen);
         }
 
-       /* updateAllDeptTransactions(){
-                    console.log("updateAllDeptTransactions");
-                    let punkt = [...this.state.punkt]
-                    console.log(punkt);
-                   // punkt.forEach((element) => this.updateDeptTransactions(element.itId));
-                   punkt.map((item) => this.updateDeptTransactions(item));
-                  // punkt.forEach((element) => console.log(element.itId));
-                }; */
-
-
-
-        updateAllDeptTransactions() {
-          console.log("updateAllDeptTransactions");
-          const currentDate = new Date();
-          const currentDateISO = currentDate.toISOString().split('T')[0];
-            let passedDays;
-            let payDays;
-            //let combinedDept = 0;
-            let deptOfAllDebtorsCombined = this.state.deptOfAllDebtorsCombined;
-            let shouldBeUpdated = false;
-          // Clone the punkt array
-          let punk = [...this.state.punkt];
-           // goint trhu eatch item / deptor
-          const updatedPunkt = this.state.punkt.map((item) => {
-
-
-                                                         // Clone the item to avoid mutating the state directly
-                                                         const updatedItem = { ...item };
-                                                                console.log("item notizen: ", updatedItem.notizen);
-
-                                                         const transactions = updatedItem.transactions || [];
-                                                         const updatedTransactions = [];
-                                                         //hier is das problem 0
-                                                         let combinedTransactionsDept = 0;
-                                                         //test
-                                                                let addingAllOriginalTransactionLendigs = 0;
-                                                         // Going thru the transactions
-                                                            //Test if it acctucally goes trhu all
-                                                            let zähler = 0;
-                                                            let elseZähler = 0;
-                                                         transactions.forEach((transaction) => {
-
-
-                                                               //setting up dates and times
-                                                               //Limiting Dates to Days so that its bound to the calender instead of hours
-                                                               let borrowDate = new Date(transaction.date);
-                                                               borrowDate= new Date(borrowDate.getFullYear(), borrowDate.getMonth(), borrowDate.getDate());
-
-                                                               let updateDate = new Date(transaction.updateDate);
-                                                                   updateDate = new Date( updateDate.getFullYear(), updateDate.getMonth(), updateDate.getDate());
-
-                                                               // Datum bis zu dem man ohne interest/ Zinsen zurückzahen kann
-                                                               let freePayBackDate = new Date(transaction.freePayBackTime);
-                                                                   freePayBackDate = new Date(freePayBackDate.getFullYear(), freePayBackDate.getMonth(), freePayBackDate.getDate());
-
-                                                               // date used for the passed time calculation takes one of the other dates,
-                                                               let lastInterestDate;
-
-                                                               //wenn, ist das so richtig, müsste es nicht >= sein ?
-                                                               if( updateDate > borrowDate) {
-                                                                //wenn nicht null und größer
-                                                                    lastInterestDate = updateDate;
-                                                               }else {
-                                                                //wenn null oder nicht kleiner
-                                                                    lastInterestDate = borrowDate;
-                                                                    updateDate = borrowDate;
-                                                               }
-
-                                                                //SicherStellen Das alle Daten stimmen , nicht null sind, und sie korrgieren wenn sie es sind
-                                                               if(freePayBackDate === null || freePayBackDate < borrowDate ){
-                                                                    freePayBackDate = borrowDate;
-                                                               };
-
-                                                                //Der Teil müsste der überflüssige sein
-                                                               /* if( updateDate > borrowDate) {
-                                                                   //wenn nicht null und größer
-                                                                    lastInterestDate = updateDate;
-
-                                                                }else {
-                                                                     //wenn null oder nicht kleiner
-                                                                    lastInterestDate = borrowDate;
-                                                                    updateDate = borrowDate;
-                                                                } */
-
-                                                               if(currentDate <= freePayBackDate){
-                                                                    //wenn innerhalt payBckTime
-                                                                    lastInterestDate = currentDate;
-                                                               } else {
-                                                                    //wenn auserhalb
-
-                                                                    // wenn aber ubdated größer ist
-                                                                    if(updateDate < freePayBackDate) {
-                                                                      lastInterestDate = freePayBackDate;
-                                                                    };
-
-
-                                                               }; // Bis hier sollt eigendlich funktionieren und alle fälle lösen
-
-                                                               const timePassedMS = currentDate - lastInterestDate;
-
-
-                                                               //Richtige lösung, Datum auf tage begrenzen (ohne stunden)
-                                                               passedDays = Math.floor(timePassedMS / (1000 * 60 * 60 * 24));
-
-                                                               payDays = passedDays  / transaction.interestPer;
-
-                                                               let transactionDept;
-                                                               transactionDept = Number(transaction.dept);
-
-                                                               // applying interesst to a single transaction
-                                                                        //(important here is if its empty or 0, how should the logic work? with 0 you could have one interation tho intersst mid be applied
-                                                               if (payDays >= transaction.interestPer && transaction.interestPer > 0) {
-                                                                            console.log("Zinsen");
-                                                                            console.log("trnsaction.dept: ", transaction.dept);
-
-
-                                                                    // neu: +(-) paid back,  funktionierts?, wie  mache ich das bei plus/ minus beträgen,
-                                                                    let calculatedDept = transactionDept; //+ transaction.paidBack;
-
-                                                                            console.log("start dept: ", calculatedDept);
-
-                                                                    // calculating the dept with interesst
-                                                                    // calculating calculatedDept
-                                                                        // i = 1 wegen  <=, dardurch geht die loop sonst einmal mehr durch
-                                                                    for (let i = 1; i <= payDays; i++) {
-                                                                        const interest = calculatedDept * (transaction.interest / 100);
-                                                                                console.log("interest: ", interest);
-                                                                                console.log("curentDept(loop) before: ", calculatedDept);
-                                                                        calculatedDept += interest;
-                                                                                console.log("curentDept(loop): ", calculatedDept);
-                                                                                console.log("test: ", payDays, " ", i);
-                                                                    };
-
-                                                                           console.log("totalDept: ", calculatedDept);
-
-                                                                    //updating the transacton dept to the dept with interesst
-                                                                    transaction.dept = calculatedDept;
-
-                                                                    //setting updateDate to currentDate
-                                                                    transaction.updateDate = currentDate;
-
-                                                                    //adding the transaction dept with interesst to the overall dept
-                                                                    combinedTransactionsDept += calculatedDept;
-                                                                            console.log("combined Dept after update: ", combinedTransactionsDept);
-                                                               } else {
-                                                                    // adding transaction.dept = transactionDept ?? würde es korrigieren, allerdings könnte es in der zukunft heisen das wenn nichts berechnet wird es zurük gesetzt wird.
-                                                                            //(braucht es diese zeile?)
-                                                                    transaction.dept = transactionDept;
-                                                                    //new
-                                                                            console.log("Kein Update für: ", transaction.notizen);
-                                                                            combinedTransactionsDept += transactionDept;
-                                                                            console.log("Kein Update für: ", transaction.notizen);
-                                                                            elseZähler++;
-                                                                            console.log("elseZähler: ", elseZähler);
-                                                               }
-
-                                                                // add the updated transaction to the
-                                                                updatedTransactions.push(transaction);
-
-
-                                                         });
-
-                                                            // Checking If the dept has Changed, as to not update if there is no change
-                                                                // potencial problem if transactions change without changing the overall sum of the person.
-                                                         if(combinedTransactionsDept !== item.betrag){
-                                                                        //Brauche ich die Logs noch?
-                                                                        deptOfAllDebtorsCombined +=  combinedTransactionsDept;
-                                                                        console.log("combined Dept (somethings wrong?): ", combinedTransactionsDept);
-                                                              shouldBeUpdated = true;
-                                                              updatedItem.betrag = combinedTransactionsDept;
-                                                                        console.log("updatedItem.betrag after update: ", item.betrag, " ", updatedItem.betrag);
-                                                         } else {
-                                                                        console.log("combined Dept else(somethings wrong?): ", combinedTransactionsDept);
-                                                         }
-
-                                                         // Update the transactions array in the cloned item
-                                                         updatedItem.transactions = updatedTransactions;
-                                                                    console.log("updatedItem: ", updatedItem);
-                                                         return updatedItem;
-                                                   });
-
-             // Update the state with the modified punkt array
-             if(shouldBeUpdated){
-                        console.log("statecalled:", updatedPunkt)
-              //updatePunkt.betrag = combinedDept;
-              this.setState({ punkt: updatedPunkt });
-              localStorage.setItem('punkt', JSON.stringify(updatedPunkt));
-             } else {
-                        console.log("shouldBeUpdated: ", shouldBeUpdated);
-             }
-
-        };
 
 
 
@@ -712,7 +576,7 @@ class App extends React.Component {
                                  deleteTransaction={(id, tId)=> this.deleteTransaction(id, tId)}
                 />
 
-                <PayBackTransactionListe itemList={this.state.payBackTransactions}/>
+
 
 
                                 //causing error, coz possible loop, // ich glaube ich muss das in nem anderen component machen
@@ -735,3 +599,5 @@ class App extends React.Component {
 }
 
 export default App;
+
+

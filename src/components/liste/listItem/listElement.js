@@ -4,6 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPen} from '@fortawesome/free-solid-svg-icons';
 import "../../../Styles.scss";
 import "../../App.scss";
+import {Link} from "react-router-dom";
 
 
 /**
@@ -184,14 +185,19 @@ export function ListElement(props) {
                            </Modal.Footer>
                        </Modal>
 
-            <Card.Body onClick={(e) => auswahlTransactions()}>
-               
+
+            <Card.Body >
+                <Link to={`/transactions/${props.item.itId}`} style={{ textDecoration: 'none' }} >
                 <div className="punktHull">
-                    <p className="punkt">{props.item.todoPunkt}</p>
-                    <p> {Number(props.item.betrag).toFixed(2)}</p>
+
+                    <p className="punkt">{props.item.debitorName}</p>
+                    <p> {Number(props.item.amount).toFixed(2)}</p>
+
                 </div>
+                 </Link>
             </Card.Body>
         </Card>
     )
 }
 
+//<Card.Body onClick={(e) => auswahlTransactions()}>
