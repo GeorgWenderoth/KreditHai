@@ -15,16 +15,20 @@ import {useParams} from 'react-router-dom';
  */
 export function TransactionListeUseRouter(props) {
 
+    let newDate = new Date();
+
+    let datum =  newDate.toISOString().split('T')[0];
+
     const params = useParams();
 
     const [transactions, setTransactions] = useState([]);
 
     const [showM, setShowM] = useState(false);
-    const [days, setDays] = useState();
-    const [payBackMoney, setPayBackMoney] = useState();
+    const [days, setDays] = useState(7);
+    const [payBackMoney, setPayBackMoney] = useState(0);
 
     //for future use
-    const [date, setDate] = useState();
+    const [date, setDate] = useState(datum);
     const [notes, setNotes] = useState("");
 
 
@@ -42,7 +46,8 @@ export function TransactionListeUseRouter(props) {
 
 
     const handleSmartPay = () => {
-     let promise =  AxiosCalls('post', '/smartPayBack?days=' + days +'&payBackMoney=' + payBackMoney + '&debitorId=' + params.debitorId);
+     let promise =  AxiosCalls('post', '/smartPayBack?days=' + days +'&payBackMoney=' + payBackMoney + '&debitorId=' + params.debitorId + '&date'+ date +'&notes='+ notes);
+        console.log("handleSmartPay: days: ", days, "payBackMoney: ", payBackMoney)
      }
 
 
@@ -71,7 +76,7 @@ export function TransactionListeUseRouter(props) {
                                        <Modal show={showM} onHide={handleCloseWithoutSaving}>
                                                                   <Modal.Header closeButton>
                                                                       <Modal.Title>
-                                                                          Rückzahlung
+                                                                         Schlaue Rückzahlung
                                                                       </Modal.Title>
                                                                   </Modal.Header>
                                                                   <Modal.Body>

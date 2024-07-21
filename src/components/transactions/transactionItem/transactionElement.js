@@ -26,7 +26,7 @@ export function TransactionElement(props) {
     const [displayButton, setDisplayButton] = useState(props.item.strich ? "none" : "visible");
     const [displayTick, setDisplayTick] = useState(props.item.strich ? "visible": "none");
     const [displayColour, setDisplayColour] = useState(props.item.betrag >= 0 ? true : false );
-    const [dept, setDept] = useState(props.item.betrag);
+    const [dept, setDept] = useState(props.item.originalAmount);
 
 
 
@@ -164,7 +164,8 @@ export function TransactionElement(props) {
                     <p className="transaktionWhite">{props.item.borrowDate}</p>
                     <p className="transaktionWhite">{props.item.interestRate} %</p>
                     <p className="transaktionWhite">Fällig alle: {props.item.interestFrequency} Tage</p>
-                    <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{props.item.betrag}</p>
+                    <p className="transaktionWhite">Zukünftige Zinsen: {props.item.futureInterest.toFixed(4)}</p>
+                    <p  className={ (displayColour ? "transactionAmountGreen" : "transactionAmountRed") } >{props.item.originalAmount}</p>
                 </div>
                </Link>
                 <Modal show={showM} onHide={handleCloseWithoutSaving}>
