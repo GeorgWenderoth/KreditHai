@@ -6,7 +6,7 @@ import {BereichUeberschrift} from "./ueberschrift/bereichUeberschrift";
 import {ContainerListe} from "./liste/containerListe";
 import {LocalStorageIdService} from "../utils/localStorageIdService";
 import {LocalStorageCalls} from "../utils/localStorageCalls";
-import {TransactionListe} from "./transactions/transactionListe";
+import {TransactionListe} from "./transactions/transactionListeOld";
 import {PayBackTransactionListe} from "./payBackTransactions/payBackTransactionListe";
 import {AxiosCalls} from "../utils/axiosCalls";
 
