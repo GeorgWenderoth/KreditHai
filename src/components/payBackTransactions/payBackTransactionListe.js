@@ -37,8 +37,8 @@ export function PayBackTransactionListe (props) {
         console.log("name: ", schuldnerName); */
 
          useEffect(() => {
-         console.log("transactionId: ", transactionId)
-         console.log("purpose: ", purpose)
+            console.log("transactionId: ", transactionId)
+            console.log("purpose: ", purpose)
                 let promise = AxiosCalls('get', '/payBackTransaktionen?transactionId=' + transactionId);
                     let cPayBackTransactions = [];
                      promise.then(value => {
@@ -46,7 +46,11 @@ export function PayBackTransactionListe (props) {
                                          console.log("transactions: ", cPayBackTransactions);
                                          setPayBackTransactions( cPayBackTransactions);
 
-                                     });
+                     }).catch(error => {
+                                   // Fehler abfangen und im UI anzeigen
+                                   console.error("Fehler beim Abrufen der Transaktionen: ", error.message);
+                                   alert("Fehler: " + error.message);  // Freundliche Fehlermeldung an den Benutzer
+                               });
 
                 }, []);
 
