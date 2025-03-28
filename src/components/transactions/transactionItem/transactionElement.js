@@ -19,14 +19,13 @@ export function TransactionElement(props) {
     const [date, setDate] = useState(props.item.date);
     const [showM, setShowM] = useState(false);
     const [titel, setTitel] = useState(props.schuldnerName);
-      //  const [titel, setTitel] = useState(props.item.todoPunkt);
-    const [betrag, setBetrag] = useState(0);
+    const [betrag, setBetrag] = useState(0); //payBackBetrag
     const [notes, setNotes] = useState(props.item.notizen === undefined ? 'notizen' : props.item.notizen);
     //const [payBackNotes, setPayBackNotes] = useState(props.item.notizen === undefined ? 'notizen' : props.item.notizen);
     const [displayButton, setDisplayButton] = useState(props.item.strich ? "none" : "visible");
     const [displayTick, setDisplayTick] = useState(props.item.strich ? "visible": "none");
     const [displayColour, setDisplayColour] = useState(props.item.betrag >= 0 ? true : false );
-    const [dept, setDept] = useState(props.item.originalAmount);
+   /// const [dept, setDept] = useState(props.item.originalAmount); //wieso original amount? wieso nicht amount? 28.03.25 Alter Code
 
 
 
@@ -60,14 +59,16 @@ export function TransactionElement(props) {
     const handleClose = () => {
             console.log("notizen: " + notes);
            if(showM){
-               const ob = {
+
+           //Kann Weg
+             /*  const ob = {
                    "itId": props.item.itId,
                    "title": props.item.notizen, //"todoPunkt": titel,
                    "betrag": betrag,
                    "strich": false,
                    "datum": date,
                    "notizen": notes,
-               }
+               } */
 
                const newPayBackTransaction = {
                     "id": null,
@@ -87,9 +88,9 @@ export function TransactionElement(props) {
             }
         };
 
+
     const handlePayAllBack = () => {
-       // setBetrag(props.item.dept * -1);
-        setBetrag((props.item.dept * -1).toFixed(2));
+        setBetrag((props.item.amount * -1).toFixed(2));
     }
 
     const handleDelete = () => {
@@ -110,7 +111,8 @@ export function TransactionElement(props) {
         setDate(props.item.date);
     }
 
-    const calculateAcctualDept = () => {
+    //alter frontend only code? Ja, kann weg, oder würde so was im frontend sinn machen?
+  /*  const calculateAcctualDept = () => {
         let today = new Date();
         let lendDate = new Date(props.item.date);
         let days =  today - lendDate;
@@ -124,7 +126,7 @@ export function TransactionElement(props) {
             setDept(total);
         }
 
-    }
+    } */
    /* useEffect(() => {
     console.log(props.item.interestPer, props.item.interestRate);
         calculateAcctualDept();
