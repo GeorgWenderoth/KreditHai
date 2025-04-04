@@ -25,7 +25,7 @@ export function TransactionElement(props) {
     const [displayButton, setDisplayButton] = useState(props.item.strich ? "none" : "visible");
     const [displayTick, setDisplayTick] = useState(props.item.strich ? "visible": "none");
     const [displayColour, setDisplayColour] = useState(props.item.betrag >= 0 ? true : false );
-   /// const [dept, setDept] = useState(props.item.originalAmount); //wieso original amount? wieso nicht amount? 28.03.25 Alter Code
+   /// const [dept, setDept] = useState(props.item.originalAmount); //wieso original amount? wieso nicht amount? 28.03.25 alter code
 
 
 
@@ -60,16 +60,6 @@ export function TransactionElement(props) {
             console.log("notizen: " + notes);
            if(showM){
 
-           //Kann Weg
-             /*  const ob = {
-                   "itId": props.item.itId,
-                   "title": props.item.notizen, //"todoPunkt": titel,
-                   "betrag": betrag,
-                   "strich": false,
-                   "datum": date,
-                   "notizen": notes,
-               } */
-
                const newPayBackTransaction = {
                     "id": null,
                     "transactionId": props.item.id,
@@ -88,9 +78,13 @@ export function TransactionElement(props) {
             }
         };
 
-
+  // nochmal den falschen code nutzen, um nan im backend auszuschließen 28.03.25
     const handlePayAllBack = () => {
-        setBetrag((props.item.amount * -1).toFixed(2));
+
+       console.log("props.item.dept: ", props.item.dept);
+       console.log("props.item: ", props.item );
+
+       setBetrag((props.item.amount * -1).toFixed(2));
     }
 
     const handleDelete = () => {
@@ -111,22 +105,7 @@ export function TransactionElement(props) {
         setDate(props.item.date);
     }
 
-    //alter frontend only code? Ja, kann weg, oder würde so was im frontend sinn machen?
-  /*  const calculateAcctualDept = () => {
-        let today = new Date();
-        let lendDate = new Date(props.item.date);
-        let days =  today - lendDate;
-        let payDay = days / props.item.interestPer;
-        if(! payDay <1){
-         let total = dept
-            for(let i = 0; i< payDay; i++ ){
-             let  interest = total * (props.item.interestRate/ 100);
-                total += interest;
-            }
-            setDept(total);
-        }
 
-    } */
    /* useEffect(() => {
     console.log(props.item.interestPer, props.item.interestRate);
         calculateAcctualDept();
