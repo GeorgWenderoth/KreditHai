@@ -54,7 +54,7 @@ export function TransactionElement(props) {
 
     }
      /**
-      * Schließt Modal und speichert die änderungen im Localstorage (LocalStorageCalls) und im Frontend State (props.updatePunkt)
+      * Schließt Modal und sended die Änderungen ans Backend
       */
     const handleClose = () => {
             console.log("notizen: " + notes);
@@ -69,16 +69,20 @@ export function TransactionElement(props) {
                     "notes": notes,
                }
 
-                                                                   //notizen statt titel, weil das ja der name der schulden ist
-               // props.updateTransaction(props.item.itId, props.item.tId, props.schuldnerName, props.item.notizen, betrag, date, notes,false);
-                AxiosCalls('post', '/neuePayBackTransaktion', newPayBackTransaction);
+                let promise = AxiosCalls('post', '/neuePayBackTransaktion', newPayBackTransaction);
+
+                promise.then(response => {
+                            alert("PayBack successfull");
+                        }).catch(error =>{
+                            alert("Fehler: " + error.message);
+                        });
 
                 setDisplayColour(betrag >= 0 ? true : false);
                 setShowM(false);
             }
         };
 
-  // nochmal den falschen code nutzen, um nan im backend auszuschließen 28.03.25
+
     const handlePayAllBack = () => {
 
        console.log("props.item.dept: ", props.item.dept);

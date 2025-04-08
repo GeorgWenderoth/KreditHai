@@ -34,6 +34,7 @@ export function AxiosCalls(method,url, object){
             if (error.response) {
                 // Server-Antwort mit Statuscode, außerhalb des 2xx-Bereichs
                 console.error("Server Error: ", error.response.data);
+                // alert(error.response.data.message);
                 throw new Error(error.response.data.message || "Serverfehler ist aufgetreten.");
             } else if (error.request) {
                 // Anfrage wurde gesendet, aber keine Antwort erhalten
