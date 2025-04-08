@@ -27,6 +27,8 @@ export function TransactionElement(props) {
     const [displayColour, setDisplayColour] = useState(props.item.betrag >= 0 ? true : false );
    /// const [dept, setDept] = useState(props.item.originalAmount); //wieso original amount? wieso nicht amount? 28.03.25 alter code
 
+   const [betragError, setBetragError] = useState("");
+
 
 
 
@@ -118,7 +120,22 @@ export function TransactionElement(props) {
 
     const handleShow = () => setShowM(true);
     const handleText = (e) => setTitel(e.target.value);
-    const handleBetrag = (e) => setBetrag(e.target.value);
+    //const handleBetrag = (e) => setBetrag(e.target.value);
+    const handleBetrag = (e) => {
+
+    var maxPayBackAmount = (props.item.amount * -1).toFixed(2);
+    // <) 0 oder < 0?
+    if(props.item.amount > 0 && e.target.value <0 && e.target.value <= maxPayBackAmount ||
+     props.item.amount < 0 && e.target.value >0 && e.target.value >= maxPayBackAmount ) {
+       console.log("darf gesendet werden");
+       setBetragError("");
+     } else {
+     console.log("darf nicht gesendet werden");
+     setBetragError("Der Betrag ist ungültig oder überschreitet die Schuld.");
+     }
+
+    setBetrag(e.target.value);
+    }
     const handleNotes = (e) => setNotes(e.target.value)
 
     return (
@@ -164,7 +181,10 @@ export function TransactionElement(props) {
                                    <div className="mb-3 row">
                                        <label className="col-3 col-form-label">Betrag: </label>
                                        <div className="col-9">
-                                           <input className="form-control " type="number" onChange={handleBetrag} value={betrag}/>
+                                           <input className={`form-control ${betragError ? 'is-invalid' : ''}`} type="number" onChange={handleBetrag} value={betrag}/>
+                                           {betragError && (
+                                                   <div className="invalid-feedback">{betragError}</div>
+                                               )}
                                        </div>
                                    </div>
                                    <div className="mb-3 row">
