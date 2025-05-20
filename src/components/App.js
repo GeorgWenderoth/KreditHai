@@ -78,6 +78,17 @@ class App extends React.Component {
             let debitorName = split.toString();
             debitorName = debitorName.trim();
             debitorName = debitorName.replace(/,/g, '');
+
+            // Duplikat-Prüfung
+            const exists = this.state.punkt.some(
+                (d) => d.debitorName.trim().toLowerCase() === debitorName.toLowerCase()
+            );
+
+            if (exists) {
+                alert("Dieser Debitor wurde bereits angelegt.");
+                return;
+            }
+
             let date = new Date();
             let datum =  date.toISOString().split('T')[0];
 
@@ -89,6 +100,9 @@ class App extends React.Component {
                  "strich": false,
                  "date": datum,
             }
+
+            //20.05.25, hier checken ob es de debitor schon gibt
+            //des im backend dann auch verhindern
 
             let promise = AxiosCalls('post', '/neuerSchuldner', newDebitor);
             promise.then(item => {
