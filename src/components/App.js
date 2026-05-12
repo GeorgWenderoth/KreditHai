@@ -113,6 +113,12 @@ class App extends React.Component {
         }
     }
 
+    handleSearch = (value) => {
+    let searchResult =  this.state.find(value);
+    console.log("searchResult", );
+    }
+
+
     /**
      * Von child to parent component, Wird im Child  listElement aufgerufen und mit den übergeben werte wird ein axiosRequest (transaction) ans Backend gesendet,
       wenn erfolgreich wird das transaction Object in den state geupdatet
@@ -193,7 +199,7 @@ class App extends React.Component {
 
         return (
             <div className="App">
-                <ToDoHeader handleSubmit={(value) => this.handleSubmit(value)}/>
+                <ToDoHeader handleSubmit={(value) => this.handleSubmit(value)} handleChange={(value) => this.handleSearch(value)} />
                 <BereichUeberschrift ueberschrift={"Zu erledigende To-dos"}/>
                 <ContainerListe itemList={this.state.punkt}
                                 updatePunkt={(id, title, betrag, harken, datum, notizen, interestRate, interestPer, freePayBackTime) =>
