@@ -56,6 +56,11 @@ export function ToDoHeader(props){
         return errors;
     }
 
+    const onChange = (value)=> {
+        console.log("onChange");
+
+    }
+
 
 
 
@@ -92,6 +97,30 @@ export function ToDoHeader(props){
                     )
                 }
             </Formik>
+            <div className="searchBar">
+            <Formik initialValues={{todopunkt: ""}} validate={validate} onSubmit={onSubmit} onChange={(e) => onChange(e.target.value)}>
+                            {
+                                ({
+                                    isSubmitting,
+                                    errors,
+                                    values,
+                                }) => (
+                                    <Form className="row g-3 justify-content-center" >
+                                        <div className="col-auto">
+                                            <Field type="text" name={"todopunkt"}  className="form-control"  id="inp" placeholder="Debitor"/>
+                                            <ErrorMessage name={"todopunkt"} />
+                                        </div>
+                                        <div className="col-auto">
+                                            <Button type="submit" className="btn-secondary">Hinzufügen</Button>
+                                        </div>
+
+
+
+                                    </Form>
+                                )
+                            }
+                        </Formik>
+                        </div>
         </div>
     )
 }

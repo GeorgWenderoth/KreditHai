@@ -78,6 +78,17 @@ class App extends React.Component {
             let debitorName = split.toString();
             debitorName = debitorName.trim();
             debitorName = debitorName.replace(/,/g, '');
+
+            // Duplikat-Prüfung
+            const exists = this.state.punkt.some(
+                (d) => d.debitorName.trim().toLowerCase() === debitorName.toLowerCase()
+            );
+
+            if (exists) {
+                alert("Dieser Debitor wurde bereits angelegt.");
+                return;
+            }
+
             let date = new Date();
             let datum =  date.toISOString().split('T')[0];
 
@@ -90,6 +101,9 @@ class App extends React.Component {
                  "date": datum,
             }
 
+            //20.05.25, hier checken ob es de debitor schon gibt
+            //des im backend dann auch verhindern
+
             let promise = AxiosCalls('post', '/neuerSchuldner', newDebitor);
             promise.then(item => {
                 let debitors = [...this.state.punkt];
@@ -98,6 +112,12 @@ class App extends React.Component {
             });
         }
     }
+
+    handleSearch = (value) => {
+    let searchResult =  this.state.find(value);
+    console.log("searchResult", );
+    }
+
 
     /**
      * Von child to parent component, Wird im Child  listElement aufgerufen und mit den übergeben werte wird ein axiosRequest (transaction) ans Backend gesendet,
@@ -179,7 +199,7 @@ class App extends React.Component {
 
         return (
             <div className="App">
-                <ToDoHeader handleSubmit={(value) => this.handleSubmit(value)}/>
+                <ToDoHeader handleSubmit={(value) => this.handleSubmit(value)} handleChange={(value) => this.handleSearch(value)} />
                 <BereichUeberschrift ueberschrift={"Zu erledigende To-dos"}/>
                 <ContainerListe itemList={this.state.punkt}
                                 updatePunkt={(id, title, betrag, harken, datum, notizen, interestRate, interestPer, freePayBackTime) =>

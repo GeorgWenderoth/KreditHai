@@ -41,14 +41,22 @@ export function TransactionListeUseRouter(props) {
                                  console.log("transactions: ", cTransactions);
                                  setTransactions(cTransactions);
                              });
-
      }, []);
 
 
     const handleSmartPay = () => {
      let promise =  AxiosCalls('post', '/smartPayBack?days=' + days +'&payBackMoney=' + payBackMoney + '&debitorId=' + params.debitorId + '&date'+ date +'&notes='+ notes);
         console.log("handleSmartPay: days: ", days, "payBackMoney: ", payBackMoney)
-     }
+
+        promise.then(response => {  //response ein fehler typo, warum kein crasah?
+            alert("Smart payBack successfull");
+            console.log("Smart payBack successfull");
+        }).catch(error =>{
+            alert("Fehler: " + error.message);
+            console.log("Fehler: " + error.message);
+        });
+
+     };
 
 
     const handleClose = () => {

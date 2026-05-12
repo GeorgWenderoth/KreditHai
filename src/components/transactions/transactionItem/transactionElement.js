@@ -19,14 +19,15 @@ export function TransactionElement(props) {
     const [date, setDate] = useState(props.item.date);
     const [showM, setShowM] = useState(false);
     const [titel, setTitel] = useState(props.schuldnerName);
-      //  const [titel, setTitel] = useState(props.item.todoPunkt);
-    const [betrag, setBetrag] = useState(0);
+    const [betrag, setBetrag] = useState(0); //payBackBetrag
     const [notes, setNotes] = useState(props.item.notizen === undefined ? 'notizen' : props.item.notizen);
     //const [payBackNotes, setPayBackNotes] = useState(props.item.notizen === undefined ? 'notizen' : props.item.notizen);
     const [displayButton, setDisplayButton] = useState(props.item.strich ? "none" : "visible");
     const [displayTick, setDisplayTick] = useState(props.item.strich ? "visible": "none");
     const [displayColour, setDisplayColour] = useState(props.item.betrag >= 0 ? true : false );
-    const [dept, setDept] = useState(props.item.originalAmount);
+   /// const [dept, setDept] = useState(props.item.originalAmount); //wieso original amount? wieso nicht amount? 28.03.25 alter code
+
+   const [betragError, setBetragError] = useState("");
 
 
 
@@ -55,19 +56,11 @@ export function TransactionElement(props) {
 
     }
      /**
-      * Schließt Modal und speichert die änderungen im Localstorage (LocalStorageCalls) und im Frontend State (props.updatePunkt)
+      * Schließt Modal und sended die Änderungen ans Backend
       */
     const handleClose = () => {
             console.log("notizen: " + notes);
            if(showM){
-               const ob = {
-                   "itId": props.item.itId,
-                   "title": props.item.notizen, //"todoPunkt": titel,
-                   "betrag": betrag,
-                   "strich": false,
-                   "datum": date,
-                   "notizen": notes,
-               }
 
                const newPayBackTransaction = {
                     "id": null,
@@ -78,18 +71,26 @@ export function TransactionElement(props) {
                     "notes": notes,
                }
 
-                                                                   //notizen statt titel, weil das ja der name der schulden ist
-               // props.updateTransaction(props.item.itId, props.item.tId, props.schuldnerName, props.item.notizen, betrag, date, notes,false);
-                AxiosCalls('post', '/neuePayBackTransaktion', newPayBackTransaction);
+                let promise = AxiosCalls('post', '/neuePayBackTransaktion', newPayBackTransaction);
+
+                promise.then(response => {
+                            alert("PayBack successfull");
+                        }).catch(error =>{
+                            alert("Fehler: " + error.message);
+                        });
 
                 setDisplayColour(betrag >= 0 ? true : false);
                 setShowM(false);
             }
         };
 
+
     const handlePayAllBack = () => {
-       // setBetrag(props.item.dept * -1);
-        setBetrag((props.item.dept * -1).toFixed(2));
+
+       console.log("props.item.dept: ", props.item.dept);
+       console.log("props.item: ", props.item );
+
+       setBetrag((props.item.amount * -1).toFixed(2));
     }
 
     const handleDelete = () => {
@@ -110,21 +111,7 @@ export function TransactionElement(props) {
         setDate(props.item.date);
     }
 
-    const calculateAcctualDept = () => {
-        let today = new Date();
-        let lendDate = new Date(props.item.date);
-        let days =  today - lendDate;
-        let payDay = days / props.item.interestPer;
-        if(! payDay <1){
-         let total = dept
-            for(let i = 0; i< payDay; i++ ){
-             let  interest = total * (props.item.interestRate/ 100);
-                total += interest;
-            }
-            setDept(total);
-        }
 
-    }
    /* useEffect(() => {
     console.log(props.item.interestPer, props.item.interestRate);
         calculateAcctualDept();
@@ -133,7 +120,22 @@ export function TransactionElement(props) {
 
     const handleShow = () => setShowM(true);
     const handleText = (e) => setTitel(e.target.value);
-    const handleBetrag = (e) => setBetrag(e.target.value);
+    //const handleBetrag = (e) => setBetrag(e.target.value);
+    const handleBetrag = (e) => {
+
+    var maxPayBackAmount = (props.item.amount * -1).toFixed(2);
+    // <) 0 oder < 0?
+    if(props.item.amount > 0 && e.target.value <0 && e.target.value <= maxPayBackAmount ||
+     props.item.amount < 0 && e.target.value >0 && e.target.value >= maxPayBackAmount ) {
+       console.log("darf gesendet werden");
+       setBetragError("");
+     } else {
+     console.log("darf nicht gesendet werden");
+     setBetragError("Der Betrag ist ungültig oder überschreitet die Schuld.");
+     }
+
+    setBetrag(e.target.value);
+    }
     const handleNotes = (e) => setNotes(e.target.value)
 
     return (
@@ -179,7 +181,10 @@ export function TransactionElement(props) {
                                    <div className="mb-3 row">
                                        <label className="col-3 col-form-label">Betrag: </label>
                                        <div className="col-9">
-                                           <input className="form-control " type="number" onChange={handleBetrag} value={betrag}/>
+                                           <input className={`form-control ${betragError ? 'is-invalid' : ''}`} type="number" onChange={handleBetrag} value={betrag}/>
+                                           {betragError && (
+                                                   <div className="invalid-feedback">{betragError}</div>
+                                               )}
                                        </div>
                                    </div>
                                    <div className="mb-3 row">
